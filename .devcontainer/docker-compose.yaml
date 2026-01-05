@@ -1,0 +1,17 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: devcontainer.env
+    environment:
+      COMPOSE_PROJECT_NAME: purrsonal-mobile
+      DISPLAY: ${DISPLAY}
+    user: vscode
+    volumes:
+      - ..:/workspace:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.ssh:/home/vscode/.ssh:ro 
+networks:
+  default:
+    name: purrsonal-mobile
