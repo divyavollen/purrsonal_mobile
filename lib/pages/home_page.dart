@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workspace/components/add_pet.dart';
 import 'package:workspace/components/app_body.dart';
 import 'package:workspace/components/app_drawer.dart';
 
@@ -26,7 +27,14 @@ class HomePage extends StatelessWidget {
 
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AddPet();
+            },
+          );
+        },
       ),
     );
   }
