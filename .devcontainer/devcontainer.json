@@ -10,7 +10,8 @@
         "Dart-Code.flutter",
         "Dart-Code.dart-code",
         "usernamehw.errorlens",
-        "hzgood.dart-data-class-generator"
+        "hzgood.dart-data-class-generator",
+        "redhat.vscode-xml"
       ]
     }
   },

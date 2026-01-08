@@ -4,53 +4,58 @@ import 'package:workspace/util/app_logger.dart';
 
 class PetDatabase {
   final Box<Pet> _petBox;
-  final Box _settingsBox;
+  Box? _settingsBox;
 
   PetDatabase(this._petBox, this._settingsBox);
 
-  List<Pet> petList = [];
+  PetDatabase.pet(this._petBox);
 
-  void createInitialData() async {
-    petList = [
+  List<Pet> get petList => _petBox.values.toList();
+
+  void createInitialData() {
+    List<Pet> initialPets = [
       Pet(
         name: "Pixel",
+        species: "Cat",
+        breed: "Unknown",
         birthdayMillis: 1766663400000,
-        sex: 'M',
+        gender: 'M',
         imagePath: 'assets/images/pexels.jpg',
       ),
       Pet(
         name: "Millie",
+        species: "Cat",
+        breed: "Unknown",
         birthdayMillis: 1672531200000,
-        sex: 'F',
+        gender: 'F',
         imagePath: 'assets/images/millie.jpg',
       ),
       Pet(
         name: "Pookie",
+        species: "Cat",
+        breed: "Unknown",
         birthdayMillis: 1641031200000,
-        sex: 'F',
+        gender: 'F',
         imagePath: 'assets/images/pookie.jpg',
       ),
       Pet(
         name: "Bingus",
+        species: "Cat",
+        breed: "Unknown",
         birthdayMillis: 1641031200000,
-        sex: 'M',
+        gender: 'M',
         imagePath: 'assets/images/bingus.jpg',
       ),
     ];
 
-    await _petBox.addAll(petList);
-    await _settingsBox.put('is_first_run', false);
-    logger.i('Initialised pets: $petList');
+    _petBox.addAll(initialPets);
+    _settingsBox?.put('is_first_run', false);
+    logger.i('Initialised pets: $initialPets');
   }
 
-  void loadPets() {
-    petList = _petBox.values.toList();
-    logger.i('Loaded ${petList.length} pets');
-  }
+  void addNewPet(Pet pet) {
+    logger.i('Adding new pet: $pet');
 
-  void updatePets() async {
-    await _petBox.clear();
-    await _petBox.addAll(petList);
-    logger.i('Box updated with ${petList.length} items');
+    _petBox.add(pet);
   }
 }

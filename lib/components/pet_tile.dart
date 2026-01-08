@@ -78,17 +78,18 @@ class PetTile extends StatelessWidget {
   }
 
   Widget _buildPetState() {
+    bool hasNoImage = pet!.imagePath == null || pet!.imagePath!.trim().isEmpty;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 25.0, top: 20.0),
-
+          padding: EdgeInsetsGeometry.only(top: 10.0),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: pet?.sex == 'M'
+                color: pet?.gender == 'M'
                     ? const Color.fromARGB(255, 122, 180, 214)
                     : const Color.fromRGBO(225, 115, 140, 1),
                 width: 3,
@@ -98,21 +99,35 @@ class PetTile extends StatelessWidget {
 
             child: ClipRRect(
               borderRadius: BorderRadius.circular(100),
-              child: Image.asset(
-                pet!.imagePath,
+              child: Container(
                 height: 150.0,
                 width: 150.0,
-                fit: BoxFit.cover,
+                decoration: BoxDecoration(
+                  color: hasNoImage
+                      ? Color.fromARGB(255, 222, 229, 233)
+                      : Colors.transparent,
+                  shape: BoxShape.circle,
+                ),
+                child: hasNoImage
+                    ? const Icon(
+                        Icons.image_not_supported,
+                        size: 90,
+                        color: Color.fromARGB(255, 122, 180, 214),
+                      )
+                    : Image.asset(
+                        pet!.imagePath!,
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
           ),
         ),
 
         Padding(
-          padding: const EdgeInsets.only(top: 15.0, left: 15.0),
+          padding: const EdgeInsets.only(left: 15.0, top: 10.0),
           child: Row(
             children: [
-              pet?.sex == 'M'
+              pet?.gender == 'M'
                   ? Icon(
                       Icons.male,
                       color: const Color.fromARGB(255, 122, 180, 214),
@@ -122,25 +137,22 @@ class PetTile extends StatelessWidget {
                       color: const Color.fromRGBO(225, 115, 140, 1),
                     ),
 
-              const SizedBox(width: 5),
+              const SizedBox(width: 3),
 
               Text(pet!.name),
 
               Spacer(),
 
-              Padding(
-                padding: EdgeInsetsGeometry.all(10),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.delete,
-                    color: const Color.fromARGB(255, 199, 78, 78),
-                  ),
-                  onPressed: () {
-                    onDelete?.call(index!);
-                  },
-                  splashColor: const Color.fromARGB(255, 163, 59, 59),
-                  hoverColor: const Color.fromARGB(255, 163, 59, 59),
+              IconButton(
+                icon: Icon(
+                  Icons.delete,
+                  color: const Color.fromARGB(255, 199, 78, 78),
                 ),
+                onPressed: () {
+                  onDelete?.call(index!);
+                },
+                splashColor: const Color.fromARGB(255, 163, 59, 59),
+                hoverColor: const Color.fromARGB(255, 163, 59, 59),
               ),
             ],
           ),

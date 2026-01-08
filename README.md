@@ -19,3 +19,6 @@
 2. Verify connection: `adb devices`
 3. Make sure Flutter sees the device: `flutter devices`
 4. Run your app with `flutter run` or run `main.dart` from VSCode
+
+
+To re-generate Hive Adapters run `flutter pub run build_runner build`

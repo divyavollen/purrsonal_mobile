@@ -4,7 +4,6 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:workspace/components/pet_tile.dart';
 import 'package:workspace/data/pet_database.dart';
 import 'package:workspace/models/pet.dart';
-import 'package:workspace/util/app_logger.dart';
 
 class AppBody extends StatefulWidget {
   const AppBody({super.key});
@@ -15,9 +14,11 @@ class AppBody extends StatefulWidget {
 
 class _AppBodyState extends State<AppBody> {
   late PetDatabase petDb;
+  late List<Pet> petList;
 
   @override
   void initState() {
+    super.initState();
     final Box<Pet> petBox = Hive.box<Pet>('pets');
     final Box settingsBox = Hive.box('settings');
     petDb = PetDatabase(petBox, settingsBox);
@@ -26,18 +27,9 @@ class _AppBodyState extends State<AppBody> {
 
     if (isFirstRun) {
       petDb.createInitialData();
-    } else {
-      petDb.loadPets();
     }
-    super.initState();
-  }
 
-  void deletePet(int index) {
-    logger.i("Deleting pet ${petDb.petList[index]}");
-    setState(() {
-      petDb.petList.removeAt(index);
-    });
-    petDb.updatePets();
+    petList = petDb.petList;
   }
 
   @override
@@ -69,25 +61,34 @@ class _AppBodyState extends State<AppBody> {
 
           SizedBox(height: 10),
 
-          SizedBox(
-            height: screenHeight * 0.32,
-            child: ListView.builder(
-              itemCount: petDb.petList.isEmpty ? 1 : petDb.petList.length,
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.only(left: 10),
-              itemBuilder: (context, index) {
-                if (petDb.petList.isEmpty) {
-                  return const PetTile.empty();
-                }
+          ValueListenableBuilder(
+            valueListenable: Hive.box<Pet>('pets').listenable(),
+            builder: (BuildContext context, Box<Pet> box, Widget? child) {
+              final currentPets = box.values.toList();
 
-                final pet = petDb.petList[index];
-                return PetTile(
-                  pet: pet,
-                  index: index,
-                  onDelete: (context) => deletePet(index),
-                );
-              },
-            ),
+              return SizedBox(
+                height: screenHeight * 0.3,
+                child: ListView.builder(
+                  itemCount: currentPets.isEmpty ? 1 : currentPets.length,
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.only(left: 10),
+                  itemBuilder: (context, index) {
+                    if (currentPets.isEmpty) {
+                      return const PetTile.empty();
+                    }
+
+                    final pet = currentPets[index];
+                    return PetTile(
+                      pet: pet,
+                      index: index,
+                      onDelete: (context) {
+                        pet.delete();
+                      },
+                    );
+                  },
+                ),
+              );
+            },
           ),
         ],
       ),
