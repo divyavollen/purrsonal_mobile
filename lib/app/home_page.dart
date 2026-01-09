@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:workspace/components/app_body.dart';
-import 'package:workspace/components/app_drawer.dart';
-import 'package:workspace/components/pets/add_pet.dart';
+import 'package:workspace/app/components/app_body.dart';
+import 'package:workspace/app/components/app_drawer.dart';
+import 'package:workspace/pets/add_pet.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -24,8 +24,6 @@ class HomePage extends StatelessWidget {
       drawer: AppDrawer(),
 
       body: AppBody(),
-
-      //TODO add global theming for widgets in add pet page
 
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),

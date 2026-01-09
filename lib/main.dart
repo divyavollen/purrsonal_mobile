@@ -2,8 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:workspace/app/components/app_theme.dart';
+import 'package:workspace/app/home_page.dart';
 import 'package:workspace/models/pet.dart';
-import 'package:workspace/pages/home_page.dart';
 import 'package:workspace/util/app_logger.dart';
 
 void main() async {
@@ -40,26 +41,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Purrsonal',
 
-      theme: ThemeData(
-        colorScheme: .fromSeed(
-          seedColor: const Color.fromRGBO(204, 230, 245, 1),
-        ),
+      theme: AppTheme.light,
 
-        appBarTheme: AppBarThemeData(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-
-        drawerTheme: DrawerThemeData(
-          backgroundColor: const Color.fromRGBO(217, 234, 243, 1),
-        ),
-
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: const Color.fromRGBO(241, 163, 181, 1),
-          splashColor: const Color.fromRGBO(225, 115, 140, 1),
-          elevation: 0,
-        ),
-      ),
       home: const HomePage(),
     );
   }

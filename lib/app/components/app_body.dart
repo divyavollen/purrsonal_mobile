@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:workspace/components/pet_tile.dart';
 import 'package:workspace/data/pet_database.dart';
 import 'package:workspace/models/pet.dart';
+import 'package:workspace/pets/pet_tile.dart';
 
 class AppBody extends StatefulWidget {
   const AppBody({super.key});
