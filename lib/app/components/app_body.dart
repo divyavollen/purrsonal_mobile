@@ -20,15 +20,7 @@ class _AppBodyState extends State<AppBody> {
   void initState() {
     super.initState();
     final Box<Pet> petBox = Hive.box<Pet>('pets');
-    final Box settingsBox = Hive.box('settings');
-    petDb = PetDatabase(petBox, settingsBox);
-
-    bool isFirstRun = settingsBox.get('is_first_run', defaultValue: true);
-
-    if (isFirstRun) {
-      petDb.createInitialData();
-    }
-
+    petDb = PetDatabase(petBox);
     petList = petDb.petList;
   }
 
@@ -47,10 +39,7 @@ class _AppBodyState extends State<AppBody> {
 
               Text(
                 'Your Pets',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
 
               SizedBox(width: 8),

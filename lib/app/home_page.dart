@@ -11,14 +11,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: -5,
-        title: Text(
-          'Home',
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-          ),
-        ),
+        title: Text('Home'),
       ),
 
       drawer: AppDrawer(),
@@ -27,12 +20,12 @@ class HomePage extends StatelessWidget {
 
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {
-          showDialog(
+        onPressed: () async {
+          await showDialog(
             context: context,
-            builder: (BuildContext context) {
-              return AddPet();
-            },
+            builder: (context) => AddPet(),
+            barrierDismissible: false,
+            useSafeArea: false,
           );
         },
       ),

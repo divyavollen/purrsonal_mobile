@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ImageSourceSheet extends StatelessWidget {
+class ImageSourceProvider extends StatelessWidget {
   final Future<void> Function(ImageSource source) pickImage;
+  final bool isUploaded;
+  final Function() clearImage;
 
-  const ImageSourceSheet({
+  const ImageSourceProvider({
     super.key,
     required this.pickImage,
+    required this.isUploaded,
+    required this.clearImage,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double bottomPadding = MediaQuery.of(context).padding.bottom > 0
+        ? 0
+        : 10.0;
+
     return SafeArea(
       child: Wrap(
         children: [
           ListTile(
             leading: Icon(Icons.photo_library),
             title: Text(
-              'Photo Library',
+              isUploaded ? 'Update photo' : 'Choose photo',
               style: TextStyle(
                 color: Colors.grey[600],
               ),
@@ -25,14 +33,15 @@ class ImageSourceSheet extends StatelessWidget {
             iconColor: Colors.grey[600],
             contentPadding: EdgeInsets.only(left: 25.0, top: 10.0),
             onTap: () {
-              pickImage(ImageSource.gallery);
               Navigator.of(context).pop();
+              pickImage(ImageSource.gallery);
             },
           ),
+
           ListTile(
             leading: Icon(Icons.photo_camera),
             title: Text(
-              'Camera',
+              'Take photo',
               style: TextStyle(
                 color: Colors.grey[600],
               ),
@@ -40,25 +49,32 @@ class ImageSourceSheet extends StatelessWidget {
             iconColor: Colors.grey[600],
             contentPadding: EdgeInsets.only(left: 25.0),
             onTap: () {
-              pickImage(ImageSource.camera);
               Navigator.of(context).pop();
+              pickImage(ImageSource.camera);
             },
           ),
 
-          ListTile(
-            leading: Icon(Icons.cancel),
-            title: Text(
-              'Cancel',
-              style: TextStyle(
-                color: Colors.grey[600],
+          if (isUploaded) ...[
+            const Divider(indent: 25, endIndent: 25),
+            ListTile(
+              leading: const Icon(
+                Icons.delete,
+                color: Colors.red,
               ),
+              title: const Text(
+                'Delete photo',
+                style: TextStyle(color: Colors.red),
+              ),
+              contentPadding: EdgeInsets.only(
+                left: 25.0,
+                bottom: bottomPadding,
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                clearImage();
+              },
             ),
-            iconColor: Colors.grey[600],
-            contentPadding: EdgeInsets.only(left: 25.0, bottom: 10.0),
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
+          ],
         ],
       ),
     );

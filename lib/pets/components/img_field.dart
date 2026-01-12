@@ -2,14 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-class PetImagePicker extends StatelessWidget {
+class ImageField extends StatelessWidget {
   final File? image;
   final Function(BuildContext)? showPicker;
+  final Function(BuildContext)? showClearImage;
 
-  const PetImagePicker({
+  const ImageField({
     super.key,
     this.image,
     this.showPicker,
+    this.showClearImage,
   });
 
   @override
@@ -17,11 +19,8 @@ class PetImagePicker extends StatelessWidget {
     return Center(
       child: InputDecorator(
         decoration: InputDecoration(
-          labelText: 'Upload Photo',
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 5,
-          ),
+          labelText: 'Upload photo',
+          filled: false,
         ),
         child: GestureDetector(
           onTap: () {

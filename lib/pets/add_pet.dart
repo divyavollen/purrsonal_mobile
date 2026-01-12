@@ -5,9 +5,9 @@ import 'package:workspace/controller/add_pet_controller.dart';
 import 'package:workspace/data/pet_database.dart';
 import 'package:workspace/models/pet.dart';
 import 'package:workspace/pets/components/gender_button.dart';
-import 'package:workspace/pets/components/img_src_sheet.dart';
+import 'package:workspace/pets/components/img_field.dart';
+import 'package:workspace/pets/components/img_src_provider.dart';
 import 'package:workspace/pets/components/pet_birthday_picker.dart';
-import 'package:workspace/pets/components/pet_img_picker.dart';
 import 'package:workspace/util/add_pet_input_builder.dart';
 import 'package:workspace/util/validator/pet_validator.dart';
 
@@ -26,7 +26,7 @@ class _AddPetState extends State<AddPet> {
   @override
   void initState() {
     super.initState();
-    _petDb = PetDatabase.pet(Hive.box<Pet>('pets'));
+    _petDb = PetDatabase(Hive.box<Pet>('pets'));
   }
 
   void onGenderSelectionChange(Set<String> newSelection) {
@@ -69,82 +69,98 @@ class _AddPetState extends State<AddPet> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    return Dialog.fullscreen(
+      child: Form(
+        key: _formKey,
 
-    return Form(
-      key: _formKey,
-      child: AlertDialog(
-        title: Text("Add a New Pet"),
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text("New Pet"),
+            leadingWidth: 40,
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.close_rounded,
+              ),
+              onPressed: () => Navigator.pop(context),
+              alignment: AlignmentGeometry.center,
+              padding: const EdgeInsets.only(left: 15.0, bottom: 2.0),
+              iconSize: 28,
+            ),
+          ),
 
-        content: SizedBox(
-          width: screenWidth * 0.9,
-          height: screenHeight * 0.65,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                PetImagePicker(
-                  image: _controller.image,
-                  showPicker: (ctx) => showModalBottomSheet(
-                    context: ctx,
-                    builder: (_) => ImageSourceSheet(
-                      pickImage: (src) => _controller.pickImage(src, setState),
+          body: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 20.0,
+              ),
+              child: Column(
+                children: [
+                  ImageField(
+                    image: _controller.image,
+
+                    showPicker: (ctx) => showModalBottomSheet(
+                      context: ctx,
+                      builder: (_) => ImageSourceProvider(
+                        pickImage: (src) =>
+                            _controller.pickImage(src, setState),
+                        isUploaded: _controller.image != null ? true : false,
+                        clearImage: () => _controller.clearImage(setState),
+                      ),
+                      showDragHandle: true,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 15),
 
-                const SizedBox(height: 30),
+                  AddPetInputBuilder.buildTextField(
+                    label: 'Name',
+                    controller: _controller.nameController,
+                    validator: PetValidator.validateName,
+                  ),
+                  const SizedBox(height: 15),
 
-                AddPetInputBuilder.buildTextField(
-                  label: 'Name',
-                  controller: _controller.nameController,
-                  validator: PetValidator.validateName,
-                ),
+                  AddPetInputBuilder.buildTextField(
+                    label: 'Species',
+                    controller: _controller.speciesController,
+                    maxLength: 10,
+                    validator: (v) =>
+                        PetValidator.validateRequired(v, 'Species'),
+                    formatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
 
-                const SizedBox(height: 20),
+                  AddPetInputBuilder.buildTextField(
+                    label: 'Breed',
+                    controller: _controller.breedController,
+                  ),
+                  const SizedBox(height: 15),
 
-                AddPetInputBuilder.buildTextField(
-                  label: 'Species',
-                  controller: _controller.speciesController,
-                  maxLength: 10,
-                  validator: (v) => PetValidator.validateRequired(v, 'Species'),
-                  formatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
-                  ],
-                ),
+                  PetBirthdayPicker(
+                    birthdayController: _controller.birthdayController,
+                    onTap: onBirthdayPick,
+                  ),
+                  const SizedBox(height: 15),
 
-                const SizedBox(height: 20),
+                  GenderButton(
+                    selectedGender: _controller.selectedGender,
+                    onSelectionChanged: onGenderSelectionChange,
+                    genderInvalid: _controller.genderInvalid,
+                  ),
+                  const SizedBox(height: 30),
 
-                AddPetInputBuilder.buildTextField(
-                  label: 'Breed',
-                  controller: _controller.breedController,
-                ),
-
-                const SizedBox(height: 20),
-
-                PetBirthdayPicker(
-                  birthdayController: _controller.birthdayController,
-                  onTap: onBirthdayPick,
-                ),
-
-                const SizedBox(height: 20),
-
-                GenderButton(
-                  selectedGender: _controller.selectedGender,
-                  onSelectionChanged: onGenderSelectionChange,
-                  genderInvalid: _controller.genderInvalid,
-                ),
-              ],
+                  ElevatedButton(
+                    onPressed: _submit,
+                    child: const Text('Add Pet'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-        actions: [
-          TextButton(onPressed: _submit, child: const Text('Add')),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-        ],
       ),
     );
   }

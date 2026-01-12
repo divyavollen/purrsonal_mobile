@@ -18,11 +18,19 @@ class AddPetInputBuilder extends StatelessWidget {
   }) {
     return TextFormField(
       controller: controller,
-      decoration: InputDecoration(labelText: label, counterText: ''),
+      decoration: InputDecoration(
+        labelText: label,
+        counterText: '',
+      ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: validator,
       inputFormatters: formatters,
       maxLength: maxLength,
+      textCapitalization: TextCapitalization.sentences,
+      keyboardType: TextInputType.text,
+      onTapOutside: (PointerDownEvent event) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
     );
   }
 }

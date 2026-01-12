@@ -22,6 +22,7 @@ class GenderButton extends StatelessWidget {
           vertical: 5,
         ),
         errorText: genderInvalid ? 'Please select a gender' : null,
+        filled: false,
       ),
       child: SizedBox(
         width: double.infinity,
@@ -30,12 +31,6 @@ class GenderButton extends StatelessWidget {
           style: SegmentedButton.styleFrom(
             side: BorderSide.none,
             padding: EdgeInsets.zero,
-
-            selectedForegroundColor: selectedGender.firstOrNull == 'M'
-                ? const Color.fromRGBO(217, 234, 243, 1)
-                : selectedGender.firstOrNull == 'F'
-                ? const Color.fromRGBO(245, 115, 170, 1)
-                : Colors.black,
 
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.zero,

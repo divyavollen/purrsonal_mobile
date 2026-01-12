@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:workspace/models/pet.dart';
+import 'package:workspace/util/app_logger.dart';
 
 class PetTile extends StatelessWidget {
   final Pet? pet;
@@ -114,9 +119,30 @@ class PetTile extends StatelessWidget {
                         size: 90,
                         color: Color.fromARGB(255, 122, 180, 214),
                       )
-                    : Image.asset(
-                        pet!.imagePath!,
-                        fit: BoxFit.cover,
+                    : FutureBuilder<Directory>(
+                        future: getApplicationDocumentsDirectory(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final String fullPath = p.join(
+                              snapshot.data!.path,
+                              pet!.imagePath!,
+                            );
+
+                            return Image.file(
+                              File(fullPath),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                appLogger.e(
+                                  "Image missing at: $fullPath",
+                                  error: error,
+                                  stackTrace: stackTrace,
+                                );
+                                return const Icon(Icons.broken_image, size: 90);
+                              },
+                            );
+                          }
+                          return const CircularProgressIndicator();
+                        },
                       ),
               ),
             ),
@@ -146,13 +172,11 @@ class PetTile extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   Icons.delete,
-                  color: const Color.fromARGB(255, 199, 78, 78),
+                  color: Colors.red,
                 ),
                 onPressed: () {
                   onDelete?.call(index!);
                 },
-                splashColor: const Color.fromARGB(255, 163, 59, 59),
-                hoverColor: const Color.fromARGB(255, 163, 59, 59),
               ),
             ],
           ),

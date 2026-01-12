@@ -4,14 +4,14 @@ import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:workspace/util/file_output.dart';
 
-late Logger logger;
+late Logger appLogger;
 
 class AppLogger {
   Future<void> init() async {
     final directory = await getExternalStorageDirectory();
     final file = File('${directory?.path}/app_logs.txt');
 
-    logger = Logger(
+    appLogger = Logger(
       level: Level.debug,
 
       printer: PrettyPrinter(

@@ -1,5 +1,6 @@
-import 'dart:ui';
+import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:workspace/app/components/app_theme.dart';
@@ -8,28 +9,40 @@ import 'package:workspace/models/pet.dart';
 import 'package:workspace/util/app_logger.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded<Future<void>>(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-  await AppLogger().init();
+      await AppLogger().init();
 
-  FlutterError.onError = (FlutterErrorDetails details) {
-    logger.e('*** App Error ***');
-    logger.e(details.exceptionAsString());
-    FlutterError.presentError(details);
-  };
+      try {
+        await Hive.initFlutter();
+        Hive.registerAdapter(PetAdapter());
 
-  PlatformDispatcher.instance.onError = (error, stack) {
-    logger.e('*** Async/Root Error ***');
-    logger.e(error.toString());
-    return true;
-  };
+        await Hive.openBox<Pet>('pets');
+      } catch (e, stack) {
+        appLogger.e("Initialization Error", error: e, stackTrace: stack);
+      }
 
-  await Hive.initFlutter();
-  Hive.registerAdapter(PetAdapter());
+      FlutterError.onError = (FlutterErrorDetails details) {
+        appLogger.e(
+          "Flutter Error",
+          error: details.exception,
+          stackTrace: details.stack,
+        );
+      };
 
-  await Hive.openBox<Pet>('pets');
-  await Hive.openBox('settings');
-  runApp(const MyApp());
+      PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+        appLogger.f("Global Async Error", error: error, stackTrace: stack);
+        return true;
+      };
+
+      runApp(const MyApp());
+    },
+    (Object error, StackTrace stackTrace) {
+      appLogger.f('Fatal Zone Error', error: error, stackTrace: stackTrace);
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {
