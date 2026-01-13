@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:workspace/models/pet.dart';
+import 'package:workspace/pets/pet_widget.dart';
 import 'package:workspace/util/app_logger.dart';
 
 class PetTile extends StatelessWidget {
@@ -42,7 +43,7 @@ class PetTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
 
-          child: isEmpty ? _buildEmptyState() : _buildPetState(),
+          child: isEmpty ? _buildEmptyState() : _buildPetState(context),
         );
       },
     );
@@ -82,106 +83,158 @@ class PetTile extends StatelessWidget {
     );
   }
 
-  Widget _buildPetState() {
+  void askDeleteConfirmation(BuildContext context) {
+    Widget cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed: () => Navigator.pop(context),
+    );
+
+    Widget continueButton = TextButton(
+      child: Text("Continue"),
+      onPressed: () {
+        onDelete?.call(index!);
+        Navigator.pop(context);
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Icon(
+        Icons.warning,
+        size: 30,
+      ),
+      content: Text("Are you sure you want to delete this pet?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Widget _buildPetState(BuildContext context) {
     bool hasNoImage = pet!.imagePath == null || pet!.imagePath!.trim().isEmpty;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: EdgeInsetsGeometry.only(top: 10.0),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: pet?.gender == 'M'
-                    ? const Color.fromARGB(255, 122, 180, 214)
-                    : const Color.fromRGBO(225, 115, 140, 1),
-                width: 3,
-              ),
-              borderRadius: BorderRadius.circular(100),
-            ),
-
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: Container(
-                height: 150.0,
-                width: 150.0,
-                decoration: BoxDecoration(
-                  color: hasNoImage
-                      ? Color.fromARGB(255, 222, 229, 233)
-                      : Colors.transparent,
-                  shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: () async {
+        await showDialog(
+          context: context,
+          builder: (context) => PetWidget(
+            mode: 'edit',
+            pet: pet,
+            onDelete: (ctx) => askDeleteConfirmation(ctx),
+          ),
+          barrierDismissible: false,
+          useSafeArea: false,
+        );
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsetsGeometry.only(top: 10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: pet?.gender == 'M'
+                      ? const Color.fromARGB(255, 122, 180, 214)
+                      : const Color.fromRGBO(225, 115, 140, 1),
+                  width: 3,
                 ),
-                child: hasNoImage
-                    ? const Icon(
-                        Icons.image_not_supported,
-                        size: 90,
-                        color: Color.fromARGB(255, 122, 180, 214),
+                borderRadius: BorderRadius.circular(100),
+              ),
+
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Container(
+                  height: 150.0,
+                  width: 150.0,
+                  decoration: BoxDecoration(
+                    color: hasNoImage
+                        ? Color.fromARGB(255, 222, 229, 233)
+                        : Colors.transparent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: hasNoImage
+                      ? const Icon(
+                          Icons.image_not_supported,
+                          size: 90,
+                          color: Color.fromARGB(255, 122, 180, 214),
+                        )
+                      : FutureBuilder<Directory>(
+                          future: getApplicationDocumentsDirectory(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final String fullPath = p.join(
+                                snapshot.data!.path,
+                                pet!.imagePath!,
+                              );
+
+                              return Image.file(
+                                File(fullPath),
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  appLogger.e(
+                                    "Image missing at: $fullPath",
+                                    error: error,
+                                    stackTrace: stackTrace,
+                                  );
+                                  return const Icon(
+                                    Icons.broken_image,
+                                    size: 90,
+                                  );
+                                },
+                              );
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
+                ),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0, top: 10.0),
+            child: Row(
+              children: [
+                pet?.gender == 'M'
+                    ? Icon(
+                        Icons.male,
+                        color: const Color.fromARGB(255, 122, 180, 214),
                       )
-                    : FutureBuilder<Directory>(
-                        future: getApplicationDocumentsDirectory(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            final String fullPath = p.join(
-                              snapshot.data!.path,
-                              pet!.imagePath!,
-                            );
-
-                            return Image.file(
-                              File(fullPath),
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                appLogger.e(
-                                  "Image missing at: $fullPath",
-                                  error: error,
-                                  stackTrace: stackTrace,
-                                );
-                                return const Icon(Icons.broken_image, size: 90);
-                              },
-                            );
-                          }
-                          return const CircularProgressIndicator();
-                        },
+                    : Icon(
+                        Icons.female,
+                        color: const Color.fromRGBO(225, 115, 140, 1),
                       ),
-              ),
+
+                const SizedBox(width: 3),
+
+                Text(pet!.name),
+
+                Spacer(),
+
+                IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                  ),
+                  onPressed: () => askDeleteConfirmation(context),
+                ),
+              ],
             ),
           ),
-        ),
-
-        Padding(
-          padding: const EdgeInsets.only(left: 15.0, top: 10.0),
-          child: Row(
-            children: [
-              pet?.gender == 'M'
-                  ? Icon(
-                      Icons.male,
-                      color: const Color.fromARGB(255, 122, 180, 214),
-                    )
-                  : Icon(
-                      Icons.female,
-                      color: const Color.fromRGBO(225, 115, 140, 1),
-                    ),
-
-              const SizedBox(width: 3),
-
-              Text(pet!.name),
-
-              Spacer(),
-
-              IconButton(
-                icon: Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                ),
-                onPressed: () {
-                  onDelete?.call(index!);
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

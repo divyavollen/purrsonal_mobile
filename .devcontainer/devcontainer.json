@@ -16,7 +16,6 @@
     }
   },
   "mounts": [
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
-    "source=pub-cache,target=/root/.pub-cache,type=volume"
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ]
 }

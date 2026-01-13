@@ -10,7 +10,7 @@ class AppTheme {
     ),
 
     textTheme: GoogleFonts.nunitoTextTheme().copyWith(
-      bodyMedium: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+      bodyMedium: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
       headlineSmall: TextStyle(
         fontWeight: FontWeight.w700,
         fontSize: 20,

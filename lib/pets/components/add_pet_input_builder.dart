@@ -18,6 +18,7 @@ class AddPetInputBuilder extends StatelessWidget {
   }) {
     return TextFormField(
       controller: controller,
+      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
         counterText: '',
