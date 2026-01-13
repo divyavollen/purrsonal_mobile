@@ -19,6 +19,7 @@ import 'package:workspace/util/validator/pet_validator.dart';
 class PetWidget extends StatefulWidget {
   final String mode;
   final Pet? pet;
+  final int? index;
   final Function(BuildContext)? onDelete;
 
   const PetWidget({
@@ -26,6 +27,7 @@ class PetWidget extends StatefulWidget {
     required this.mode,
     this.pet,
     this.onDelete,
+    this.index,
   });
 
   @override
@@ -51,17 +53,28 @@ class _PetWidgetState extends State<PetWidget> {
       _controller.nameController.text = widget.pet!.name;
       _controller.speciesController.text = widget.pet!.species;
       _controller.breedController.text = widget.pet!.breed;
+      setBirthday();
+      _controller.selectedGender.add(widget.pet!.gender);
+    }
+  }
 
+  void setBirthday() {
+    if (widget.pet!.birthdayMillis > 0) {
       DateTime date = DateTime.fromMillisecondsSinceEpoch(
         widget.pet!.birthdayMillis,
       );
 
+      appLogger.i('Date : $date');
       String formattedDate = _formatDate(date);
+
+      appLogger.i('formattedDate : $formattedDate');
+      appLogger.i('widget.pet!.birthdayMillis : $widget.pet!.birthdayMillis');
 
       _controller.birthdayController.milliseconds = widget.pet!.birthdayMillis;
       _controller.birthdayController.text = formattedDate;
-
-      _controller.selectedGender.add(widget.pet!.gender);
+    } else {
+      _controller.birthdayController.milliseconds = -1;
+      _controller.birthdayController.text = '';
     }
   }
 
@@ -75,9 +88,29 @@ class _PetWidgetState extends State<PetWidget> {
     });
   }
 
-  void _submit() {
+  void _submit() async {
     if (_controller.validate(_formKey, setState)) {
-      _controller.savePet(_petDb);
+      String path = await _controller.getImagePath();
+
+      if (isEditMode && widget.pet != null) {
+        final pet = widget.pet!;
+
+        pet.name = _controller.nameController.text;
+        pet.species = _controller.speciesController.text;
+        pet.breed = _controller.breedController.text;
+        pet.gender = _controller.selectedGender.first;
+        if (_controller.birthdayController.milliseconds > 0) {
+          pet.birthdayMillis = _controller.birthdayController.milliseconds;
+        }
+        pet.imagePath = path;
+
+        await pet.save();
+      } else {
+        _controller.savePet(_petDb);
+      }
+
+      if (!mounted) return;
+
       Navigator.pop(context);
     }
   }
@@ -90,13 +123,14 @@ class _PetWidgetState extends State<PetWidget> {
       lastDate: DateTime.now(),
     );
 
+    if (!mounted) return;
+
     if (pickedDate != null) {
       setState(() {
         _controller.birthdayController.milliseconds =
             pickedDate.millisecondsSinceEpoch;
 
         String formattedDate = _formatDate(pickedDate);
-
         _controller.birthdayController.text = formattedDate;
       });
     }
@@ -105,11 +139,15 @@ class _PetWidgetState extends State<PetWidget> {
   Future<void> _loadImageFromFile() async {
     try {
       final directory = await getApplicationDocumentsDirectory();
+
       final String fullPath = p.join(directory.path, widget.pet!.imagePath!);
 
       final file = File(fullPath);
+      bool exists = await file.exists();
 
-      if (await file.exists()) {
+      if (!mounted) return;
+
+      if (exists) {
         setState(() {
           _controller.image = file;
         });
@@ -139,15 +177,14 @@ class _PetWidgetState extends State<PetWidget> {
               onPressed: () => Navigator.pop(context),
               alignment: AlignmentGeometry.center,
               padding: const EdgeInsets.only(left: 15.0, bottom: 2.0),
-              iconSize: 28,
             ),
 
             actions: <Widget>[
               if (isEditMode)
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.delete,
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                   ),
                   tooltip: 'Delete pet',
                   onPressed: () {
@@ -173,7 +210,7 @@ class _PetWidgetState extends State<PetWidget> {
                       context: ctx,
                       builder: (_) => ImageSourceProvider(
                         pickImage: (src) =>
-                            _controller.pickImage(src, setState),
+                            _controller.pickImage(context, src, setState),
                         isUploaded: _controller.image != null ? true : false,
                         clearImage: () => _controller.clearImage(setState),
                       ),
@@ -183,6 +220,7 @@ class _PetWidgetState extends State<PetWidget> {
                   const SizedBox(height: 15),
 
                   AddPetInputBuilder.buildTextField(
+                    context,
                     label: 'Name',
                     controller: _controller.nameController,
                     validator: PetValidator.validateName,
@@ -190,6 +228,7 @@ class _PetWidgetState extends State<PetWidget> {
                   const SizedBox(height: 15),
 
                   AddPetInputBuilder.buildTextField(
+                    context,
                     label: 'Species',
                     controller: _controller.speciesController,
                     maxLength: 10,
@@ -202,6 +241,7 @@ class _PetWidgetState extends State<PetWidget> {
                   const SizedBox(height: 15),
 
                   AddPetInputBuilder.buildTextField(
+                    context,
                     label: 'Breed',
                     controller: _controller.breedController,
                   ),
@@ -233,7 +273,9 @@ class _PetWidgetState extends State<PetWidget> {
     );
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+
     return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
   }
 }

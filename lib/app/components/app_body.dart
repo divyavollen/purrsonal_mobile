@@ -69,8 +69,7 @@ class _AppBodyState extends State<AppBody> {
                     final pet = currentPets[index];
                     return PetTile(
                       pet: pet,
-                      index: index,
-                      onDelete: (context) {
+                      onDelete: () {
                         pet.delete();
                       },
                     );

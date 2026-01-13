@@ -26,11 +26,7 @@ class ImageSourceProvider extends StatelessWidget {
             leading: Icon(Icons.photo_library),
             title: Text(
               isUploaded ? 'Update photo' : 'Choose photo',
-              style: TextStyle(
-                color: Colors.grey[600],
-              ),
             ),
-            iconColor: Colors.grey[600],
             contentPadding: EdgeInsets.only(left: 25.0, top: 10.0),
             onTap: () {
               Navigator.of(context).pop();
@@ -42,11 +38,7 @@ class ImageSourceProvider extends StatelessWidget {
             leading: Icon(Icons.photo_camera),
             title: Text(
               'Take photo',
-              style: TextStyle(
-                color: Colors.grey[600],
-              ),
             ),
-            iconColor: Colors.grey[600],
             contentPadding: EdgeInsets.only(left: 25.0),
             onTap: () {
               Navigator.of(context).pop();
@@ -57,13 +49,13 @@ class ImageSourceProvider extends StatelessWidget {
           if (isUploaded) ...[
             const Divider(indent: 25, endIndent: 25),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.delete,
-                color: Colors.red,
+                color: Theme.of(context).colorScheme.error,
               ),
-              title: const Text(
+              title: Text(
                 'Delete photo',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
               contentPadding: EdgeInsets.only(
                 left: 25.0,

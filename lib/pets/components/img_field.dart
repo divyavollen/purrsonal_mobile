@@ -51,7 +51,7 @@ class ImageField extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.camera_alt,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           size: 40,
                         ),
                       ],

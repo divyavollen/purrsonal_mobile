@@ -9,7 +9,8 @@ class AddPetInputBuilder extends StatelessWidget {
     return const Placeholder();
   }
 
-  static Widget buildTextField({
+  static Widget buildTextField(
+    BuildContext context, {
     required String label,
     required TextEditingController controller,
     String? Function(String?)? validator,
@@ -18,10 +19,12 @@ class AddPetInputBuilder extends StatelessWidget {
   }) {
     return TextFormField(
       controller: controller,
-      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
         counterText: '',
+      ),
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
       ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: validator,

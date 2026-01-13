@@ -18,6 +18,9 @@ class PetBirthdayPicker extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'Birthday',
       ),
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
       readOnly: true,
       controller: birthdayController,
       onTap: onTap,

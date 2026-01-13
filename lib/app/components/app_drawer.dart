@@ -34,16 +34,16 @@ class AppDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 12.0),
             child: ListTile(
-              leading: Icon(Icons.home, color: Colors.black),
-              title: Text('Home', style: TextStyle(color: Colors.black)),
+              leading: Icon(Icons.home),
+              title: Text('Home'),
             ),
           ),
 
           Padding(
             padding: const EdgeInsets.only(left: 12.0),
             child: ListTile(
-              leading: Icon(Icons.info, color: Colors.black),
-              title: Text('About', style: TextStyle(color: Colors.black)),
+              leading: Icon(Icons.info),
+              title: Text('About'),
             ),
           ),
 
@@ -52,8 +52,8 @@ class AppDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 12.0, bottom: 35.0),
             child: ListTile(
-              leading: Icon(Icons.logout, color: Colors.black),
-              title: Text('Logout', style: TextStyle(color: Colors.black)),
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
               onTap: () {},
             ),
           ),

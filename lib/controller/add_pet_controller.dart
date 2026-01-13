@@ -19,8 +19,15 @@ class AddPetController {
   Set<String> selectedGender = {};
   bool genderInvalid = false;
 
-  Future<void> pickImage(ImageSource source, Function setState) async {
+  Future<void> pickImage(
+    BuildContext context,
+    ImageSource source,
+    Function setState,
+  ) async {
     final picked = await ImagePicker().pickImage(source: source);
+
+    if (!context.mounted) return;
+
     if (picked != null) {
       setState(() => image = File(picked.path));
     }
@@ -33,11 +40,9 @@ class AddPetController {
   }
 
   Future<void> savePet(PetDatabase petDb) async {
-    String? path = '';
+    String path = await getImagePath();
 
-    if (image != null) {
-      path = await saveImageLocally(image!);
-    }
+    appLogger.i('Saving birthday $birthdayController');
 
     petDb.addNewPet(
       Pet(
@@ -69,5 +74,32 @@ class AddPetController {
 
   Future<void> clearImage(Function setState) async {
     setState(() => image = null);
+  }
+
+  Future<String> getImagePath() async {
+    String path = '';
+    if (image != null) {
+      path = await saveImageLocally(image!) ?? '';
+    }
+    return path;
+  }
+
+  void updateFullPet(
+    int index, {
+    required PetDatabase petDb,
+    String? path,
+  }) async {
+    final pet = petDb.getPet(index);
+
+    if (pet != null) {
+      pet.name = nameController.text;
+      pet.species = speciesController.text;
+      pet.breed = breedController.text;
+      pet.gender = selectedGender.first;
+      pet.birthdayMillis = birthdayController.milliseconds;
+      pet.imagePath = path;
+
+      await pet.save();
+    }
   }
 }

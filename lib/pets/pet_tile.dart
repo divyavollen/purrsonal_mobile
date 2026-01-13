@@ -9,20 +9,17 @@ import 'package:workspace/util/app_logger.dart';
 
 class PetTile extends StatelessWidget {
   final Pet? pet;
-  final int? index;
-  final Function(int)? onDelete;
+  final VoidCallback? onDelete;
   final bool isEmpty;
 
   const PetTile({
     super.key,
     required this.pet,
-    required this.index,
     required this.onDelete,
   }) : isEmpty = false;
 
   const PetTile.empty({super.key})
     : pet = null,
-      index = null,
       onDelete = null,
       isEmpty = true;
 
@@ -39,43 +36,43 @@ class PetTile extends StatelessWidget {
           width: screenWidth * 0.6,
           height: parentWidth * 0.4,
           decoration: BoxDecoration(
-            color: const Color.fromRGBO(217, 234, 243, 0.5),
+            color: Theme.of(context).colorScheme.secondaryContainer,
             borderRadius: BorderRadius.circular(12),
           ),
 
-          child: isEmpty ? _buildEmptyState() : _buildPetState(context),
+          child: isEmpty ? _buildEmptyState(context) : _buildPetState(context),
         );
       },
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const ImageIcon(
+          ImageIcon(
             AssetImage('assets/images/pets.png'),
             size: 50,
-            color: Color.fromARGB(255, 122, 180, 214),
+            color: Theme.of(context).colorScheme.primary,
           ),
           const SizedBox(height: 15),
-          const Text(
+          Text(
             "No furry friends yet!",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: Colors.black87,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             "Add your first pet to see them here.",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.black54,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -85,16 +82,27 @@ class PetTile extends StatelessWidget {
 
   void askDeleteConfirmation(BuildContext context) {
     Widget cancelButton = TextButton(
-      child: Text("Cancel"),
+      child: Text(
+        "Cancel",
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      ),
       onPressed: () => Navigator.pop(context),
     );
 
     Widget continueButton = TextButton(
-      child: Text("Continue"),
+      child: Text(
+        "Continue",
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.error,
+        ),
+      ),
       onPressed: () {
-        onDelete?.call(index!);
+        onDelete?.call();
         Navigator.pop(context);
-        if (Navigator.canPop(context)) {
+        final routeBehind = ModalRoute.of(context);
+        if (routeBehind is PopupRoute) {
           Navigator.pop(context);
         }
       },
@@ -104,8 +112,12 @@ class PetTile extends StatelessWidget {
       title: Icon(
         Icons.warning,
         size: 30,
+        color: Theme.of(context).colorScheme.error,
       ),
-      content: Text("Are you sure you want to delete this pet?"),
+      content: Text(
+        "Are you sure you want to delete this pet?",
+        style: Theme.of(context).textTheme.titleSmall,
+      ),
       actions: [
         cancelButton,
         continueButton,
@@ -146,8 +158,8 @@ class PetTile extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border.all(
                   color: pet?.gender == 'M'
-                      ? const Color.fromARGB(255, 122, 180, 214)
-                      : const Color.fromRGBO(225, 115, 140, 1),
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.tertiary,
                   width: 3,
                 ),
                 borderRadius: BorderRadius.circular(100),
@@ -160,15 +172,15 @@ class PetTile extends StatelessWidget {
                   width: 150.0,
                   decoration: BoxDecoration(
                     color: hasNoImage
-                        ? Color.fromARGB(255, 222, 229, 233)
+                        ? Theme.of(context).colorScheme.surfaceContainerHighest
                         : Colors.transparent,
                     shape: BoxShape.circle,
                   ),
                   child: hasNoImage
-                      ? const Icon(
+                      ? Icon(
                           Icons.image_not_supported,
                           size: 90,
-                          color: Color.fromARGB(255, 122, 180, 214),
+                          color: Theme.of(context).colorScheme.primary,
                         )
                       : FutureBuilder<Directory>(
                           future: getApplicationDocumentsDirectory(),
@@ -210,11 +222,11 @@ class PetTile extends StatelessWidget {
                 pet?.gender == 'M'
                     ? Icon(
                         Icons.male,
-                        color: const Color.fromARGB(255, 122, 180, 214),
+                        color: Theme.of(context).colorScheme.primary,
                       )
                     : Icon(
                         Icons.female,
-                        color: const Color.fromRGBO(225, 115, 140, 1),
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
 
                 const SizedBox(width: 3),
@@ -226,7 +238,7 @@ class PetTile extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     Icons.delete,
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                   ),
                   onPressed: () => askDeleteConfirmation(context),
                 ),

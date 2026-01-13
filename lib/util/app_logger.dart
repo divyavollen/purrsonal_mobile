@@ -9,6 +9,7 @@ late Logger appLogger;
 class AppLogger {
   Future<void> init() async {
     final directory = await getExternalStorageDirectory();
+
     final file = File('${directory?.path}/app_logs.txt');
 
     appLogger = Logger(

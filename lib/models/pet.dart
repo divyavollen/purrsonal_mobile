@@ -8,22 +8,22 @@ part 'pet.g.dart';
 @HiveType(typeId: 0)
 class Pet extends HiveObject {
   @HiveField(0)
-  final String name;
+  String name;
 
   @HiveField(1)
-  final String species;
+  String species;
 
   @HiveField(2)
-  final String breed;
+  String breed;
 
   @HiveField(3)
-  final String gender;
+  String gender;
 
   @HiveField(4)
-  final int birthdayMillis;
+  int birthdayMillis;
 
   @HiveField(5)
-  final String? imagePath;
+  String? imagePath;
   Pet({
     required this.name,
     required this.species,
@@ -85,5 +85,23 @@ class Pet extends HiveObject {
         gender.hashCode ^
         birthdayMillis.hashCode ^
         imagePath.hashCode;
+  }
+
+  Pet copyWith({
+    String? name,
+    String? species,
+    String? breed,
+    String? gender,
+    int? birthdayMillis,
+    String? imagePath,
+  }) {
+    return Pet(
+      name: name ?? this.name,
+      species: species ?? this.species,
+      breed: breed ?? this.breed,
+      gender: gender ?? this.gender,
+      birthdayMillis: birthdayMillis ?? this.birthdayMillis,
+      imagePath: imagePath ?? this.imagePath,
+    );
   }
 }

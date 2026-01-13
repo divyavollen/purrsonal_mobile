@@ -14,4 +14,8 @@ class PetDatabase {
 
     _petBox.add(pet);
   }
+
+  Pet? getPet(int index) {
+    return _petBox.getAt(index);
+  }
 }

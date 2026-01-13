@@ -40,13 +40,13 @@ class GenderButton extends StatelessWidget {
           emptySelectionAllowed: true,
           multiSelectionEnabled: false,
 
-          segments: const [
+          segments: [
             ButtonSegment<String>(
               value: 'M',
               label: Icon(
                 Icons.male,
                 size: 25,
-                color: Color.fromARGB(255, 122, 180, 214),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             ButtonSegment<String>(
@@ -54,7 +54,7 @@ class GenderButton extends StatelessWidget {
               label: Icon(
                 Icons.female,
                 size: 25,
-                color: Color.fromRGBO(225, 115, 140, 1),
+                color: Theme.of(context).colorScheme.tertiary,
               ),
             ),
           ],
