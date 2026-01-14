@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:workspace/app/components/app_dimensions.dart';
 
 class AppTheme {
   static final ThemeData light = ThemeData(
@@ -48,16 +49,16 @@ class AppTheme {
       fillColor: const Color.fromRGBO(217, 234, 243, 1),
 
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: brSmall,
       ),
 
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: brSmall,
         borderSide: const BorderSide(color: Colors.grey, width: 1.0),
       ),
 
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: brSmall,
         borderSide: const BorderSide(color: Colors.blue, width: 2.0),
       ),
 
@@ -88,9 +89,7 @@ class AppTheme {
         shadowColor: Colors.transparent,
         backgroundColor: const Color.fromRGBO(241, 163, 181, 1),
         foregroundColor: Colors.grey[800],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(8.0),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: brSmall),
         minimumSize: const Size(double.infinity, 56),
         textStyle: const TextStyle(
           fontSize: 18,
@@ -169,11 +168,11 @@ class AppTheme {
       fillColor: const Color.fromRGBO(37, 45, 52, 1),
 
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: brSmall,
       ),
 
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: brSmall,
         borderSide: const BorderSide(
           color: Color.fromRGBO(69, 71, 73, 1),
           width: 1.0,
@@ -181,7 +180,7 @@ class AppTheme {
       ),
 
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: brSmall,
         borderSide: const BorderSide(
           color: Color.fromRGBO(130, 177, 255, 1),
           width: 2.0,
@@ -217,7 +216,7 @@ class AppTheme {
         backgroundColor: const Color.fromRGBO(243, 176, 190, 1),
         foregroundColor: const Color.fromRGBO(33, 33, 33, 1),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: brSmall,
         ),
         minimumSize: const Size(double.infinity, 56),
         textStyle: const TextStyle(

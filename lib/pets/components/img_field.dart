@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:workspace/app/components/app_dimensions.dart';
 
 class ImageField extends StatelessWidget {
   final File? image;
@@ -30,21 +31,20 @@ class ImageField extends StatelessWidget {
             radius: 90,
             backgroundColor: Colors.transparent,
             child: image != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(90),
+                ? ClipOval(
                     child: Image.file(
                       image!,
-                      width: 150,
-                      height: 150,
+                      width: petFormImgSize,
+                      height: petFormImgSize,
                       fit: BoxFit.cover,
                     ),
                   )
                 : Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(90),
+                      shape: BoxShape.circle,
                     ),
-                    width: 150,
-                    height: 150,
+                    width: petFormImgSize,
+                    height: petFormImgSize,
 
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

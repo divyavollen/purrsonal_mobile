@@ -4,6 +4,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:workspace/app/components/app_dimensions.dart';
 import 'package:workspace/data/pet_database.dart';
 import 'package:workspace/models/pet.dart';
+import 'package:workspace/pets/components/pet_detail.dart';
 import 'package:workspace/pets/pet_tile.dart';
 
 class AppBody extends StatefulWidget {
@@ -15,17 +16,17 @@ class AppBody extends StatefulWidget {
 
 class AppBodyState extends State<AppBody> {
   late PetDatabase petDb;
-  late List<Pet> petList;
+  int _selectedIndex = -1;
+  bool isDetailOpen = false;
+
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<double> _scrollOffset = ValueNotifier<double>(0.0);
-  int _selectedIndex = -1;
 
   @override
   void initState() {
     super.initState();
     final Box<Pet> petBox = Hive.box<Pet>('pets');
     petDb = PetDatabase(petBox);
-    petList = petDb.petList;
     _scrollController.addListener(() {
       _scrollOffset.value = _scrollController.offset;
     });
@@ -41,11 +42,11 @@ class AppBodyState extends State<AppBody> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
 
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -85,7 +86,13 @@ class AppBodyState extends State<AppBody> {
                         final pet = currentPets[index];
                         return PetTile(
                           pet: pet,
-                          onDelete: () => pet.delete(),
+                          onDelete: () {
+                            setState(() {
+                              _selectedIndex = -1;
+                              isDetailOpen = false;
+                            });
+                            pet.delete();
+                          },
                           isSelected: _selectedIndex == index,
                           onTap: () => _handleTileTap(index),
                         );
@@ -93,38 +100,12 @@ class AppBodyState extends State<AppBody> {
                     ),
                   ),
 
-                  SizedBox(height: 20),
-
-                  if (_selectedIndex != -1 && currentPets.isNotEmpty)
-                    Container(
-                      height: screenHeight * petDetailHeightMult,
-                      width: screenWidth * 0.9,
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.only(left: 8),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-
-                        borderRadius: BorderRadius.circular(
-                          12,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 10,
-                            spreadRadius: 1,
-                            offset: Offset(0, 0),
-                            blurStyle: BlurStyle.outer,
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            currentPets[_selectedIndex].name,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
+                  if (_selectedIndex != -1 &&
+                      currentPets.isNotEmpty &&
+                      isDetailOpen)
+                    PetDetail(
+                      pets: currentPets,
+                      index: _selectedIndex,
                     ),
                 ],
               );
@@ -136,7 +117,16 @@ class AppBodyState extends State<AppBody> {
   }
 
   void _handleTileTap(int index) {
-    setState(() => _selectedIndex = index);
+    setState(() {
+      if (_selectedIndex == index && isDetailOpen) {
+        _selectedIndex = -1;
+        isDetailOpen = false;
+      } else {
+        _selectedIndex = index;
+        isDetailOpen = true;
+      }
+    });
+
     final double screenWidth = MediaQuery.of(context).size.width;
     final double tileWidthWithMargin =
         (screenWidth * petTileWidthMult) + petTileMargin;

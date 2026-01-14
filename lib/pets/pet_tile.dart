@@ -50,7 +50,7 @@ class PetTile extends StatelessWidget {
               color: isSelected
                   ? Theme.of(context).colorScheme.tertiaryContainer
                   : Theme.of(context).colorScheme.secondaryContainer,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: brMedium,
             ),
 
             child: isEmpty
@@ -154,114 +154,81 @@ class PetTile extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      //async {
-      //EDIT PET
-      // await showDialog(
-      //   context: context,
-      //   builder: (context) => PetWidget(
-      //     mode: 'edit',
-      //     pet: pet,
-      //     onDelete: (ctx) => askDeleteConfirmation(ctx),
-      //   ),
-      //   barrierDismissible: false,
-      //   useSafeArea: false,
-      // );
-      //},
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          Padding(
-            padding: EdgeInsetsGeometry.only(top: 10.0),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: pet?.gender == 'M'
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.tertiary,
-                  width: 3,
-                ),
-                borderRadius: BorderRadius.circular(100),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Theme.of(context).colorScheme.error,
               ),
-
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: Container(
-                  height: 80.0,
-                  width: 80.0,
-                  decoration: BoxDecoration(
-                    color: hasNoImage
-                        ? Theme.of(context).colorScheme.surfaceContainerHighest
-                        : Colors.transparent,
-                    shape: BoxShape.circle,
-                  ),
-                  child: hasNoImage
-                      ? Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: Theme.of(context).colorScheme.primary,
-                        )
-                      : FutureBuilder<Directory>(
-                          future: getApplicationDocumentsDirectory(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              final String fullPath = p.join(
-                                snapshot.data!.path,
-                                pet!.imagePath!,
-                              );
-
-                              return Image.file(
-                                File(fullPath),
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  appLogger.e(
-                                    "Image missing at: $fullPath",
-                                    error: error,
-                                    stackTrace: stackTrace,
-                                  );
-                                  return const Icon(
-                                    Icons.broken_image,
-                                    size: 50,
-                                  );
-                                },
-                              );
-                            }
-                            return const CircularProgressIndicator();
-                          },
-                        ),
-                ),
-              ),
+              onPressed: () => askDeleteConfirmation(context),
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0, top: 10.0),
-            child: Row(
-              children: [
-                pet?.gender == 'M'
+          const Spacer(),
+
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: pet?.gender == 'M'
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.tertiary,
+                width: 3,
+              ),
+              shape: BoxShape.circle,
+            ),
+
+            child: ClipOval(
+              child: Container(
+                height: petTileImgSize,
+                width: petTileImgSize,
+                decoration: BoxDecoration(
+                  color: hasNoImage
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest
+                      : Colors.transparent,
+                  shape: BoxShape.circle,
+                ),
+                child: hasNoImage
                     ? Icon(
-                        Icons.male,
+                        Icons.image_not_supported,
+                        size: 50,
                         color: Theme.of(context).colorScheme.primary,
                       )
-                    : Icon(
-                        Icons.female,
-                        color: Theme.of(context).colorScheme.tertiary,
+                    : FutureBuilder<Directory>(
+                        future: getApplicationDocumentsDirectory(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final String fullPath = p.join(
+                              snapshot.data!.path,
+                              pet!.imagePath!,
+                            );
+
+                            return Image.file(
+                              File(fullPath),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                appLogger.e(
+                                  "Image missing at: $fullPath",
+                                  error: error,
+                                  stackTrace: stackTrace,
+                                );
+                                return const Icon(
+                                  Icons.broken_image,
+                                  size: 50,
+                                );
+                              },
+                            );
+                          }
+                          return const CircularProgressIndicator();
+                        },
                       ),
-
-                const SizedBox(width: 3),
-
-                Text(pet!.name),
-
-                Spacer(),
-
-                IconButton(
-                  icon: Icon(
-                    Icons.delete,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  onPressed: () => askDeleteConfirmation(context),
-                ),
-              ],
+              ),
             ),
           ),
         ],

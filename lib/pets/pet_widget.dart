@@ -144,8 +144,12 @@ class _PetWidgetState extends State<PetWidget> {
         if (!mounted) return;
 
         if (exists) {
-          setState(() {
-            _controller.image = file;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _controller.image = file;
+              });
+            }
           });
         } else {
           appLogger.i("Image missing at: $fullPath");
