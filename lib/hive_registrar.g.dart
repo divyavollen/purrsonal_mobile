@@ -4,15 +4,18 @@
 
 import 'package:hive_ce/hive_ce.dart';
 import 'package:workspace/models/pet.dart';
+import 'package:workspace/models/settings.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(PetAdapter());
+    registerAdapter(SettingsAdapter());
   }
 }
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(PetAdapter());
+    registerAdapter(SettingsAdapter());
   }
 }

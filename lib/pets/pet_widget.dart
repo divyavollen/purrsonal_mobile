@@ -46,7 +46,6 @@ class _PetWidgetState extends State<PetWidget> {
     _petDb = PetDatabase(Hive.box<Pet>('pets'));
 
     if (widget.mode == "edit" && widget.pet != null) {
-      appLogger.i('Pet Widget in Edit mode');
       isEditMode = true;
       _loadImageFromFile();
 
@@ -64,11 +63,7 @@ class _PetWidgetState extends State<PetWidget> {
         widget.pet!.birthdayMillis,
       );
 
-      appLogger.i('Date : $date');
       String formattedDate = _formatDate(date);
-
-      appLogger.i('formattedDate : $formattedDate');
-      appLogger.i('widget.pet!.birthdayMillis : $widget.pet!.birthdayMillis');
 
       _controller.birthdayController.milliseconds = widget.pet!.birthdayMillis;
       _controller.birthdayController.text = formattedDate;
@@ -106,7 +101,7 @@ class _PetWidgetState extends State<PetWidget> {
 
         await pet.save();
       } else {
-        _controller.savePet(_petDb);
+        await _controller.savePet(_petDb);
       }
 
       if (!mounted) return;
@@ -138,21 +133,23 @@ class _PetWidgetState extends State<PetWidget> {
 
   Future<void> _loadImageFromFile() async {
     try {
-      final directory = await getApplicationDocumentsDirectory();
+      if (widget.pet != null) {
+        final directory = await getApplicationDocumentsDirectory();
 
-      final String fullPath = p.join(directory.path, widget.pet!.imagePath!);
+        final String fullPath = p.join(directory.path, widget.pet?.imagePath);
 
-      final file = File(fullPath);
-      bool exists = await file.exists();
+        final file = File(fullPath);
+        bool exists = await file.exists();
 
-      if (!mounted) return;
+        if (!mounted) return;
 
-      if (exists) {
-        setState(() {
-          _controller.image = file;
-        });
-      } else {
-        appLogger.i("Image missing at: $fullPath");
+        if (exists) {
+          setState(() {
+            _controller.image = file;
+          });
+        } else {
+          appLogger.i("Image missing at: $fullPath");
+        }
       }
     } catch (e) {
       appLogger.e("Error loading image: $e");

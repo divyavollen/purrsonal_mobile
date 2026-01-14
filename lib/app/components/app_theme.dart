@@ -9,6 +9,7 @@ class AppTheme {
     colorScheme: ColorScheme.fromSeed(
       seedColor: const Color.fromRGBO(204, 230, 245, 1),
       secondaryContainer: Color.fromRGBO(217, 234, 243, 1),
+      tertiaryContainer: Color.fromRGBO(177, 201, 214, 1),
       primary: Color.fromRGBO(122, 180, 214, 1),
       tertiary: Color.fromRGBO(225, 115, 140, 1),
       surfaceContainerHighest: Color.fromARGB(255, 222, 229, 233),
@@ -19,38 +20,10 @@ class AppTheme {
 
     scaffoldBackgroundColor: const Color.fromRGBO(242, 248, 252, 1),
 
-    textTheme: GoogleFonts.nunitoTextTheme()
-        .copyWith(
-          bodyMedium: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-          headlineSmall: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-            color: Colors.grey[900],
-          ),
-          titleSmall: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[900],
-          ),
-        )
-        .merge(
-          const TextTheme(
-            displayLarge: TextStyle(letterSpacing: 0.5),
-            displayMedium: TextStyle(letterSpacing: 0.5),
-            displaySmall: TextStyle(letterSpacing: 0.5),
-            headlineLarge: TextStyle(letterSpacing: 0.5),
-            headlineMedium: TextStyle(letterSpacing: 0.5),
-            headlineSmall: TextStyle(letterSpacing: 0.5),
-            titleLarge: TextStyle(letterSpacing: 0.5),
-            titleMedium: TextStyle(letterSpacing: 0.5),
-            titleSmall: TextStyle(letterSpacing: 0.5),
-            bodyLarge: TextStyle(letterSpacing: 0.5),
-            bodyMedium: TextStyle(letterSpacing: 0.5),
-            bodySmall: TextStyle(letterSpacing: 0.5),
-            labelLarge: TextStyle(letterSpacing: 0.5),
-            labelMedium: TextStyle(letterSpacing: 0.5),
-            labelSmall: TextStyle(letterSpacing: 0.5),
-          ),
-        ),
+    textTheme: _buildTextTheme(
+      GoogleFonts.nunitoTextTheme(),
+      Colors.grey[900]!,
+    ),
 
     iconButtonTheme: IconButtonThemeData(
       style: IconButton.styleFrom(iconSize: 24),
@@ -168,39 +141,10 @@ class AppTheme {
 
     scaffoldBackgroundColor: const Color.fromRGBO(18, 18, 18, 1),
 
-    textTheme: GoogleFonts.nunitoTextTheme()
-        .copyWith(
-          bodyMedium: const TextStyle(
-            fontWeight: FontWeight.normal,
-            fontSize: 16,
-          ),
-          headlineSmall: const TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-          ),
-          titleSmall: const TextStyle(
-            fontSize: 16,
-          ),
-        )
-        .merge(
-          const TextTheme(
-            displayLarge: TextStyle(letterSpacing: 0.5),
-            displayMedium: TextStyle(letterSpacing: 0.5),
-            displaySmall: TextStyle(letterSpacing: 0.5),
-            headlineLarge: TextStyle(letterSpacing: 0.5),
-            headlineMedium: TextStyle(letterSpacing: 0.5),
-            headlineSmall: TextStyle(letterSpacing: 0.5),
-            titleLarge: TextStyle(letterSpacing: 0.5),
-            titleMedium: TextStyle(letterSpacing: 0.5),
-            titleSmall: TextStyle(letterSpacing: 0.5),
-            bodyLarge: TextStyle(letterSpacing: 0.5),
-            bodyMedium: TextStyle(letterSpacing: 0.5),
-            bodySmall: TextStyle(letterSpacing: 0.5),
-            labelLarge: TextStyle(letterSpacing: 0.5),
-            labelMedium: TextStyle(letterSpacing: 0.5),
-            labelSmall: TextStyle(letterSpacing: 0.5),
-          ),
-        ),
+    textTheme: _buildTextTheme(
+      GoogleFonts.nunitoTextTheme(),
+      const Color.fromRGBO(225, 227, 229, 1),
+    ),
 
     iconButtonTheme: IconButtonThemeData(
       style: IconButton.styleFrom(iconSize: 24),
@@ -308,4 +252,40 @@ class AppTheme {
       color: Color.fromRGBO(144, 148, 151, 1),
     ),
   );
+
+  static TextTheme _buildTextTheme(TextTheme base, Color textColor) {
+    return base
+        .copyWith(
+          bodyMedium: const TextStyle(
+            fontWeight: FontWeight.normal,
+            fontSize: 16,
+          ),
+          headlineSmall: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+            color: textColor,
+          ),
+          titleSmall: TextStyle(fontSize: 16, color: textColor),
+        )
+        .apply(displayColor: textColor, bodyColor: textColor)
+        .merge(
+          const TextTheme(
+            displayLarge: TextStyle(letterSpacing: 0.5),
+            displayMedium: TextStyle(letterSpacing: 0.5),
+            displaySmall: TextStyle(letterSpacing: 0.5),
+            headlineLarge: TextStyle(letterSpacing: 0.5),
+            headlineMedium: TextStyle(letterSpacing: 0.5),
+            headlineSmall: TextStyle(letterSpacing: 0.5),
+            titleLarge: TextStyle(letterSpacing: 0.5),
+            titleMedium: TextStyle(letterSpacing: 0.5),
+            titleSmall: TextStyle(letterSpacing: 0.5),
+            bodyLarge: TextStyle(letterSpacing: 0.5),
+            bodyMedium: TextStyle(letterSpacing: 0.5),
+            bodySmall: TextStyle(letterSpacing: 0.5),
+            labelLarge: TextStyle(letterSpacing: 0.5),
+            labelMedium: TextStyle(letterSpacing: 0.5),
+            labelSmall: TextStyle(letterSpacing: 0.5),
+          ),
+        );
+  }
 }

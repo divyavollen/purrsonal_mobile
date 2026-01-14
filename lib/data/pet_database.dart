@@ -1,6 +1,5 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:workspace/models/pet.dart';
-import 'package:workspace/util/app_logger.dart';
 
 class PetDatabase {
   final Box<Pet> _petBox;
@@ -9,9 +8,7 @@ class PetDatabase {
 
   List<Pet> get petList => _petBox.values.toList();
 
-  void addNewPet(Pet pet) {
-    appLogger.i('Adding new pet: $pet');
-
+  Future<void> addNewPet(Pet pet) async {
     _petBox.add(pet);
   }
 

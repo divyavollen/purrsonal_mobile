@@ -44,7 +44,7 @@ class AddPetController {
 
     appLogger.i('Saving birthday $birthdayController');
 
-    petDb.addNewPet(
+    await petDb.addNewPet(
       Pet(
         name: nameController.text,
         species: speciesController.text,

@@ -3,10 +3,16 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:workspace/app/components/app_theme.dart';
 import 'package:workspace/app/home_page.dart';
+import 'package:workspace/data/settings_database.dart';
 import 'package:workspace/models/pet.dart';
+import 'package:workspace/models/settings.dart';
 import 'package:workspace/util/app_logger.dart';
+import 'package:workspace/util/provider/theme_provider.dart';
+
+late SettingsDatabase settingsDatabase;
 
 void main() async {
   runZonedGuarded<Future<void>>(
@@ -14,13 +20,9 @@ void main() async {
       WidgetsFlutterBinding.ensureInitialized();
 
       await AppLogger().init();
+      await _initHive();
 
-      try {
-        await Hive.initFlutter();
-        Hive.registerAdapter(PetAdapter());
-
-        await Hive.openBox<Pet>('pets');
-      } catch (e, stack) {
+      try {} catch (e, stack) {
         appLogger.e("Initialization Error", error: e, stackTrace: stack);
       }
 
@@ -37,7 +39,12 @@ void main() async {
         return true;
       };
 
-      runApp(const MyApp());
+      runApp(
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(settingsDatabase),
+          child: const MyApp(),
+        ),
+      );
     },
     (Object error, StackTrace stackTrace) {
       appLogger.f('Fatal Zone Error', error: error, stackTrace: stackTrace);
@@ -45,18 +52,32 @@ void main() async {
   );
 }
 
+Future<void> _initHive() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(PetAdapter());
+  Hive.registerAdapter(SettingsAdapter());
+
+  await Hive.openBox<Pet>('pets');
+  final settingsBox = await Hive.openBox<Settings>('settings');
+  settingsDatabase = SettingsDatabase(settingsBox);
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Purrsonal',
 
+      themeMode: themeProvider.themeMode,
       theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
 
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }

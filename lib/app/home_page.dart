@@ -4,7 +4,8 @@ import 'package:workspace/app/components/app_drawer.dart';
 import 'package:workspace/pets/pet_widget.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+  final GlobalKey<AppBodyState> _appBodyKey = GlobalKey<AppBodyState>();
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class HomePage extends StatelessWidget {
 
       drawer: AppDrawer(),
 
-      body: AppBody(),
+      body: AppBody(key: _appBodyKey),
 
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -27,6 +28,8 @@ class HomePage extends StatelessWidget {
             barrierDismissible: false,
             useSafeArea: false,
           );
+
+          _appBodyKey.currentState?.scrollToEnd();
         },
       ),
     );

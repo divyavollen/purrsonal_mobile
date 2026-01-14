@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:workspace/util/provider/theme_provider.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+
     return Drawer(
       child: Column(
         children: [
@@ -44,6 +48,29 @@ class AppDrawer extends StatelessWidget {
             child: ListTile(
               leading: Icon(Icons.info),
               title: Text('About'),
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0),
+            child: SwitchListTile(
+              value: themeProvider.isDarkMode,
+
+              title: Row(
+                children: [
+                  Icon(
+                    themeProvider.isDarkMode
+                        ? Icons.dark_mode
+                        : Icons.light_mode,
+                  ),
+                  const SizedBox(
+                    width: 14.0,
+                  ),
+                  Text('Theme'),
+                ],
+              ),
+              onChanged: (value) =>
+                  context.read<ThemeProvider>().updateTheme(value),
             ),
           ),
 

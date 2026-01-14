@@ -3,25 +3,32 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:workspace/app/components/app_dimensions.dart';
 import 'package:workspace/models/pet.dart';
-import 'package:workspace/pets/pet_widget.dart';
 import 'package:workspace/util/app_logger.dart';
 
 class PetTile extends StatelessWidget {
   final Pet? pet;
   final VoidCallback? onDelete;
   final bool isEmpty;
+  final VoidCallback? onTap;
+  final bool isSelected;
 
   const PetTile({
     super.key,
     required this.pet,
     required this.onDelete,
+    this.onTap,
+    this.isSelected = false,
   }) : isEmpty = false;
 
-  const PetTile.empty({super.key})
-    : pet = null,
-      onDelete = null,
-      isEmpty = true;
+  const PetTile.empty({
+    super.key,
+  }) : pet = null,
+       onDelete = null,
+       isEmpty = true,
+       onTap = null,
+       isSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,18 +36,27 @@ class PetTile extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        double parentWidth = constraints.maxWidth;
+        double parentHeight = constraints.maxHeight;
 
-        return Container(
-          margin: const EdgeInsets.only(right: 30, top: 10),
-          width: screenWidth * 0.6,
-          height: parentWidth * 0.4,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            borderRadius: BorderRadius.circular(12),
+        return Center(
+          child: AnimatedContainer(
+            duration: const Duration(
+              milliseconds: 300,
+            ),
+            margin: const EdgeInsets.only(right: petTileMargin),
+            width: screenWidth * petTileWidthMult,
+            height: parentHeight * petTileHeightMult,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? Theme.of(context).colorScheme.tertiaryContainer
+                  : Theme.of(context).colorScheme.secondaryContainer,
+              borderRadius: BorderRadius.circular(12),
+            ),
+
+            child: isEmpty
+                ? _buildEmptyState(context)
+                : _buildPetState(context),
           ),
-
-          child: isEmpty ? _buildEmptyState(context) : _buildPetState(context),
         );
       },
     );
@@ -136,18 +152,21 @@ class PetTile extends StatelessWidget {
     bool hasNoImage = pet!.imagePath == null || pet!.imagePath!.trim().isEmpty;
 
     return GestureDetector(
-      onTap: () async {
-        await showDialog(
-          context: context,
-          builder: (context) => PetWidget(
-            mode: 'edit',
-            pet: pet,
-            onDelete: (ctx) => askDeleteConfirmation(ctx),
-          ),
-          barrierDismissible: false,
-          useSafeArea: false,
-        );
-      },
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      //async {
+      //EDIT PET
+      // await showDialog(
+      //   context: context,
+      //   builder: (context) => PetWidget(
+      //     mode: 'edit',
+      //     pet: pet,
+      //     onDelete: (ctx) => askDeleteConfirmation(ctx),
+      //   ),
+      //   barrierDismissible: false,
+      //   useSafeArea: false,
+      // );
+      //},
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -168,8 +187,8 @@ class PetTile extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: Container(
-                  height: 150.0,
-                  width: 150.0,
+                  height: 80.0,
+                  width: 80.0,
                   decoration: BoxDecoration(
                     color: hasNoImage
                         ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -179,7 +198,7 @@ class PetTile extends StatelessWidget {
                   child: hasNoImage
                       ? Icon(
                           Icons.image_not_supported,
-                          size: 90,
+                          size: 50,
                           color: Theme.of(context).colorScheme.primary,
                         )
                       : FutureBuilder<Directory>(
@@ -202,7 +221,7 @@ class PetTile extends StatelessWidget {
                                   );
                                   return const Icon(
                                     Icons.broken_image,
-                                    size: 90,
+                                    size: 50,
                                   );
                                 },
                               );
@@ -226,7 +245,7 @@ class PetTile extends StatelessWidget {
                       )
                     : Icon(
                         Icons.female,
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).colorScheme.tertiary,
                       ),
 
                 const SizedBox(width: 3),
