@@ -13,6 +13,7 @@ class ImageSourceProvider extends StatelessWidget {
     required this.clearImage,
   });
 
+  //TODO make reusable bottom sheet
   @override
   Widget build(BuildContext context) {
     final double bottomPadding = MediaQuery.of(context).padding.bottom > 0

@@ -13,22 +13,32 @@ class Pet extends HiveObject {
   String species;
 
   @HiveField(2)
-  String breed;
+  String? breed;
 
   @HiveField(3)
   String gender;
 
   @HiveField(4)
-  int birthdayMillis;
+  int? birthdayMillis;
 
   @HiveField(5)
   String? imagePath;
+
   Pet({
     required this.name,
     required this.species,
     required this.breed,
     required this.gender,
     required this.birthdayMillis,
+    this.imagePath,
+  });
+
+  Pet.empty({
+    this.name = '',
+    this.species = '',
+    this.breed,
+    this.birthdayMillis = -1,
+    this.gender = '',
     this.imagePath,
   });
 

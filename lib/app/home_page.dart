@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workspace/app/components/app_body.dart';
 import 'package:workspace/app/components/app_drawer.dart';
-import 'package:workspace/pets/pet_widget.dart';
+import 'package:workspace/pets/pet_form.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
         onPressed: () async {
           await showDialog(
             context: context,
-            builder: (context) => PetWidget(mode: 'add'),
+            builder: (context) => PetForm(),
             barrierDismissible: false,
             useSafeArea: false,
           );

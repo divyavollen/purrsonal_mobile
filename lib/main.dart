@@ -10,6 +10,7 @@ import 'package:workspace/data/settings_database.dart';
 import 'package:workspace/models/pet.dart';
 import 'package:workspace/models/settings.dart';
 import 'package:workspace/util/app_logger.dart';
+import 'package:workspace/util/image_util.dart';
 import 'package:workspace/util/provider/theme_provider.dart';
 
 late SettingsDatabase settingsDatabase;
@@ -21,6 +22,7 @@ void main() async {
 
       await AppLogger().init();
       await _initHive();
+      await ImageUtil().init();
 
       try {} catch (e, stack) {
         appLogger.e("Initialization Error", error: e, stackTrace: stack);

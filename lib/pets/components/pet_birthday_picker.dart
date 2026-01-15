@@ -1,29 +1,37 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:workspace/controller/date_text_controller.dart';
+import 'package:intl/intl.dart';
 
 class PetBirthdayPicker extends StatelessWidget {
-  final DateTextEditingController birthdayController;
   final void Function()? onTap;
+  final int? currentMs;
 
   const PetBirthdayPicker({
     super.key,
-    required this.birthdayController,
     required this.onTap,
+    this.currentMs,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: ValueKey(currentMs),
+      initialValue: _formatDate(currentMs),
       decoration: InputDecoration(
         labelText: 'Birthday',
       ),
+
       style: TextStyle(
         color: Theme.of(context).colorScheme.onSurface,
       ),
       readOnly: true,
-      controller: birthdayController,
       onTap: onTap,
     );
+  }
+
+  String _formatDate(int? ms) {
+    if (ms == null || ms < 1) return '';
+
+    var dt = DateTime.fromMillisecondsSinceEpoch(ms);
+    return DateFormat('MM/dd/yyyy, hh:mm a').format(dt);
   }
 }

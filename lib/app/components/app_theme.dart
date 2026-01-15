@@ -35,7 +35,7 @@ class AppTheme {
       backgroundColor: const Color.fromRGBO(242, 248, 252, 1),
       titleTextStyle: TextStyle(
         fontWeight: FontWeight.w600,
-        fontSize: 22,
+        fontSize: subHeaderFontSize,
         color: Colors.grey[900],
       ),
     ),
@@ -63,9 +63,15 @@ class AppTheme {
       ),
 
       floatingLabelBehavior: FloatingLabelBehavior.always,
-      floatingLabelStyle: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+      floatingLabelStyle: TextStyle(
+        fontWeight: FontWeight.w900,
+        fontSize: mainTextFontSize,
+      ),
 
-      labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+      labelStyle: TextStyle(
+        fontWeight: FontWeight.w900,
+        fontSize: mainTextFontSize,
+      ),
 
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
     ),
@@ -75,8 +81,8 @@ class AppTheme {
       splashColor: const Color.fromRGBO(225, 115, 140, 1),
       foregroundColor: Colors.grey[800],
       elevation: 0,
-      extendedTextStyle: const TextStyle(
-        fontSize: 18,
+      extendedTextStyle: TextStyle(
+        fontSize: mainTextFontSize,
         fontWeight: FontWeight.bold,
         color: Color.fromRGBO(66, 66, 66, 1),
       ),
@@ -91,8 +97,8 @@ class AppTheme {
         foregroundColor: Colors.grey[800],
         shape: RoundedRectangleBorder(borderRadius: brSmall),
         minimumSize: const Size(double.infinity, 56),
-        textStyle: const TextStyle(
-          fontSize: 18,
+        textStyle: TextStyle(
+          fontSize: mainTextFontSize,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -100,8 +106,8 @@ class AppTheme {
 
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        textStyle: const TextStyle(
-          fontSize: 14,
+        textStyle: TextStyle(
+          fontSize: buttonTextFontSize,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -109,7 +115,7 @@ class AppTheme {
 
     listTileTheme: ListTileThemeData(
       titleTextStyle: GoogleFonts.nunito(
-        fontSize: 16,
+        fontSize: subTextFontSize,
         fontWeight: FontWeight.w700,
         color: Colors.grey[900],
       ),
@@ -149,12 +155,12 @@ class AppTheme {
       style: IconButton.styleFrom(iconSize: 24),
     ),
 
-    appBarTheme: const AppBarThemeData(
+    appBarTheme: AppBarThemeData(
       elevation: 0,
       backgroundColor: Color.fromRGBO(18, 18, 18, 1),
       titleTextStyle: TextStyle(
         fontWeight: FontWeight.w600,
-        fontSize: 22,
+        fontSize: subHeaderFontSize,
         color: Color.fromRGBO(225, 227, 229, 1),
       ),
     ),
@@ -188,11 +194,14 @@ class AppTheme {
       ),
 
       floatingLabelBehavior: FloatingLabelBehavior.always,
-      floatingLabelStyle: const TextStyle(
+      floatingLabelStyle: TextStyle(
         fontWeight: FontWeight.w900,
-        fontSize: 18,
+        fontSize: mainTextFontSize,
       ),
-      labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+      labelStyle: TextStyle(
+        fontWeight: FontWeight.w900,
+        fontSize: mainTextFontSize,
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
     ),
 
@@ -201,8 +210,8 @@ class AppTheme {
       splashColor: const Color.fromRGBO(225, 115, 140, 1),
       foregroundColor: const Color.fromRGBO(33, 33, 33, 1),
       elevation: 0,
-      extendedTextStyle: const TextStyle(
-        fontSize: 18,
+      extendedTextStyle: TextStyle(
+        fontSize: mainTextFontSize,
         fontWeight: FontWeight.bold,
         color: Color.fromRGBO(33, 33, 33, 1),
       ),
@@ -219,8 +228,8 @@ class AppTheme {
           borderRadius: brSmall,
         ),
         minimumSize: const Size(double.infinity, 56),
-        textStyle: const TextStyle(
-          fontSize: 18,
+        textStyle: TextStyle(
+          fontSize: mainTextFontSize,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -228,8 +237,8 @@ class AppTheme {
 
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        textStyle: const TextStyle(
-          fontSize: 14,
+        textStyle: TextStyle(
+          fontSize: buttonTextFontSize,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.5,
         ),
@@ -239,7 +248,7 @@ class AppTheme {
 
     listTileTheme: ListTileThemeData(
       titleTextStyle: GoogleFonts.nunito(
-        fontSize: 16,
+        fontSize: subTextFontSize,
         fontWeight: FontWeight.w700,
         color: const Color.fromRGBO(225, 227, 229, 1),
       ),
@@ -255,13 +264,13 @@ class AppTheme {
   static TextTheme _buildTextTheme(TextTheme base, Color textColor) {
     return base
         .copyWith(
-          bodyMedium: const TextStyle(
+          bodyMedium: TextStyle(
             fontWeight: FontWeight.normal,
-            fontSize: 16,
+            fontSize: subTextFontSize,
           ),
           headlineSmall: TextStyle(
             fontWeight: FontWeight.w700,
-            fontSize: 20,
+            fontSize: headLineSmallFontSize,
             color: textColor,
           ),
           titleSmall: TextStyle(fontSize: 16, color: textColor),

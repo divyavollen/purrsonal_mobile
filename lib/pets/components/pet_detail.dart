@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:workspace/app/components/app_dimensions.dart';
 import 'package:workspace/models/pet.dart';
 
 class PetDetail extends StatelessWidget {
@@ -10,36 +9,36 @@ class PetDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenHeight = MediaQuery.of(context).size.height;
+    // double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      height: screenHeight * petDetailHeightMult,
-      width: screenWidth * 0.9,
-      alignment: Alignment.center,
-      padding: EdgeInsets.only(left: 8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+      // height: screenHeight * petDetailHeightMult,
+      // width: screenWidth * 0.9,
+      // alignment: Alignment.center,
+      // padding: EdgeInsets.only(left: 8),
+      // decoration: BoxDecoration(
+      //   color: Theme.of(context).scaffoldBackgroundColor,
 
-        borderRadius: brMedium,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 10,
-            spreadRadius: 1,
-            offset: Offset(0, 0),
-            blurStyle: BlurStyle.outer,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Text(
-            pets[index].name,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
+      //   borderRadius: brMedium,
+      //   boxShadow: [
+      //     BoxShadow(
+      //       color: Colors.black.withValues(alpha: 0.2),
+      //       blurRadius: 10,
+      //       spreadRadius: 1,
+      //       offset: Offset(0, 0),
+      //       blurStyle: BlurStyle.outer,
+      //     ),
+      //   ],
+      // ),
+      // child: Row(
+      //   children: [
+      //     Text(
+      //       pets[index].name,
+      //       style: TextStyle(fontWeight: FontWeight.bold),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }
