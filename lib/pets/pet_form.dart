@@ -92,11 +92,7 @@ class _PetFormState extends State<PetForm> {
 
     if (pickedDate != null && mounted) {
       setState(() {
-        if (pickedDate.millisecond > 0) {
-          _currentPet.birthdayMillis = pickedDate.millisecondsSinceEpoch;
-        } else {
-          _currentPet.birthdayMillis = -1;
-        }
+        _currentPet.birthdayMillis = pickedDate.millisecondsSinceEpoch;
       });
     }
   }

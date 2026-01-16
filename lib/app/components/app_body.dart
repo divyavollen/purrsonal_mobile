@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:workspace/data/pet_database.dart';
 import 'package:workspace/models/pet.dart';
 import 'package:workspace/pets/pet_tile.dart';
 
@@ -13,23 +12,25 @@ class AppBody extends StatefulWidget {
 }
 
 class AppBodyState extends State<AppBody> {
-  late PetDatabase petDb;
-
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<double> _scrollOffset = ValueNotifier<double>(0.0);
+  int _prevCount = 0;
+  late Box<Pet> _petBox;
 
   @override
   void initState() {
     super.initState();
-    final Box<Pet> petBox = Hive.box<Pet>('pets');
-    petDb = PetDatabase(petBox);
+    _petBox = Hive.box<Pet>('pets');
     _scrollController.addListener(() {
       _scrollOffset.value = _scrollController.offset;
     });
+    _petBox.listenable().addListener(_handleDatabaseChange);
+    _prevCount = _petBox.length;
   }
 
   @override
   void dispose() {
+    _petBox.listenable().removeListener(_handleDatabaseChange);
     _scrollController.dispose();
     _scrollOffset.dispose();
     super.dispose();
@@ -59,13 +60,13 @@ class AppBodyState extends State<AppBody> {
           ),
 
           ValueListenableBuilder(
-            valueListenable: Hive.box<Pet>('pets').listenable(),
+            valueListenable: _petBox.listenable(),
             builder: (BuildContext context, Box<Pet> box, Widget? child) {
               final currentPets = box.values.toList();
+
               return PetTile(
                 petList: currentPets,
                 scrollController: _scrollController,
-                onLongPress: () {},
               );
             },
           ),
@@ -74,15 +75,32 @@ class AppBodyState extends State<AppBody> {
     );
   }
 
+  void _handleDatabaseChange() {
+    final int newCount = _petBox.length;
+
+    if (newCount > _prevCount) {
+      _prevCount = newCount;
+      scrollToEnd();
+    } else {
+      _prevCount = newCount;
+    }
+  }
+
   void scrollToEnd() {
+    if (!mounted || !_scrollController.hasClients) return;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 600),
-          curve: Curves.easeOutCubic,
-        );
-      }
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (_scrollController.hasClients) {
+          final double target = _scrollController.position.maxScrollExtent;
+
+          _scrollController.animateTo(
+            target,
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOutCubic,
+          );
+        }
+      });
     });
   }
 }

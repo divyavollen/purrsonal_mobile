@@ -13,9 +13,11 @@ class PetBirthdayPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final birthday = currentMs;
+
     return TextFormField(
       key: ValueKey(currentMs),
-      initialValue: _formatDate(currentMs),
+      initialValue: _formatDate(birthday),
       decoration: InputDecoration(
         labelText: 'Birthday',
       ),

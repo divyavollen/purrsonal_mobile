@@ -9,13 +9,11 @@ import 'package:workspace/util/image_util.dart';
 
 class PetTile extends StatelessWidget {
   final List<Pet>? petList;
-  final VoidCallback? onLongPress;
   final ScrollController scrollController;
 
   const PetTile({
     super.key,
     this.petList,
-    this.onLongPress,
     required this.scrollController,
   });
 
@@ -103,12 +101,15 @@ class PetTile extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onLongPress: () => showModalBottomSheet(
         context: context,
-        builder: (context) {
-          return PetTileAction(
-            onDelete: () => pet.delete(),
-          );
-        },
+        builder: (context) => PetTileAction(
+          onDelete: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+            pet.delete();
+          },
+        ),
       ),
+
       child: Center(
         child: Container(
           height: petTileImgSize,

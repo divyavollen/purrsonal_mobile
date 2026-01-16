@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workspace/app/components/confirmation_alert.dart';
+import 'package:workspace/app/components/custom_bottom_sheet.dart';
+import 'package:workspace/models/sheet_item.dart';
 
 class PetTileAction extends StatelessWidget {
   final Function onDelete;
@@ -11,42 +13,31 @@ class PetTileAction extends StatelessWidget {
         ? 0
         : 10.0;
 
-    //TODO make reusable bottom sheet
-    return SafeArea(
-      child: Wrap(
-        children: [
-          ListTile(
-            leading: Icon(Icons.admin_panel_settings),
-            title: Text('Manage Pet'),
-            contentPadding: EdgeInsets.only(
-              left: 25.0,
-              top: 10.0,
-              bottom: 10.0,
-            ),
-            onTap: () {},
+    return CustomBottomSheet(
+      items: [
+        SheetItem(
+          leading: Icon(Icons.admin_panel_settings),
+          title: Text('Manage Pet'),
+          onTap: () {},
+          padding: EdgeInsets.only(left: 25.0, top: 10.0, bottom: 10.0),
+        ),
+        SheetItem(
+          leading: Icon(
+            Icons.delete,
+            color: Theme.of(context).colorScheme.error,
           ),
-
-          ListTile(
-            leading: Icon(
-              Icons.delete,
-              color: Theme.of(context).colorScheme.error,
-            ),
-            title: Text(
-              'Delete Pet',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-            contentPadding: EdgeInsets.only(left: 25.0, bottom: bottomPadding),
-            onTap: () => ConfirmationAlertDialog.showConfirmation(
-              context,
-              button1: 'Cancel',
-              button2: 'Continue',
-              confirmationMessage: 'Are you sure you want to delete this pet?',
-              icon: Icons.warning,
-              onPressed: () => onDelete,
-            ),
+          title: Text('Delete Pet'),
+          onTap: () => ConfirmationAlertDialog.showConfirmation(
+            context,
+            button1: 'Cancel',
+            button2: 'Continue',
+            confirmationMessage: 'Are you sure you want to delete this pet?',
+            icon: Icons.warning,
+            onPressed: () => onDelete(),
           ),
-        ],
-      ),
+          padding: EdgeInsets.only(left: 25.0, bottom: bottomPadding),
+        ),
+      ],
     );
   }
 }

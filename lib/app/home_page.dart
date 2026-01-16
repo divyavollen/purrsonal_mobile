@@ -28,8 +28,6 @@ class HomePage extends StatelessWidget {
             barrierDismissible: false,
             useSafeArea: false,
           );
-
-          _appBodyKey.currentState?.scrollToEnd();
         },
       ),
     );
