@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workspace/app/components/app_dimensions.dart';
+import 'package:workspace/app/theme/app_dimensions.dart';
 import 'package:workspace/util/provider/theme_provider.dart';
 
 class AppDrawer extends StatelessWidget {

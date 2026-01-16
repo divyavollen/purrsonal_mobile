@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:workspace/models/settings.dart';
+import 'package:workspace/models/hive/settings.dart';
 
 class SettingsDatabase {
   final Box<Settings> _settingsBox;

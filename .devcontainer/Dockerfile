@@ -13,6 +13,7 @@ ARG CMAKE_VERSION=3.22.1
 # Environment variables
 ENV DOCKER_BUILDKIT=1
 ENV COMPOSE_FILE=/workspace/.devcontainer/docker-compose.yaml
+ENV PATH="${PATH}:${PUB_CACHE}/bin"
 
 # Install necessary packages
 RUN apt-get update -y \

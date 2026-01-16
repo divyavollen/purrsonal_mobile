@@ -16,6 +16,11 @@
     }
   },
   "mounts": [
+    "source=pub-cache-volume,target=/home/vscode/.pub-cache,type=volume",
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
-  ]
+  ],
+  "containerEnv": {
+    "PUB_CACHE": "/home/vscode/.pub-cache"
+  },
+  "postStartCommand": "sudo chown -R vscode:vscode /home/vscode/.pub-cache && flutter pub get"
 }

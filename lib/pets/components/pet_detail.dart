@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:workspace/models/pet.dart';
+import 'package:workspace/models/hive/pet.dart';
 
 class PetDetail extends StatelessWidget {
   final List<Pet> pets;

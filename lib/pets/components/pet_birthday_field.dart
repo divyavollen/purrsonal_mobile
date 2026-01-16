@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class PetBirthdayPicker extends StatelessWidget {
-  final void Function()? onTap;
+class PetBirthdayField extends StatelessWidget {
+  final void Function()? showCalendar;
   final int? currentMs;
 
-  const PetBirthdayPicker({
+  const PetBirthdayField({
     super.key,
-    required this.onTap,
+    required this.showCalendar,
     this.currentMs,
   });
 
@@ -26,7 +26,7 @@ class PetBirthdayPicker extends StatelessWidget {
         color: Theme.of(context).colorScheme.onSurface,
       ),
       readOnly: true,
-      onTap: onTap,
+      onTap: showCalendar,
     );
   }
 

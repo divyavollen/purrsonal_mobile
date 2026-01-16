@@ -60,7 +60,7 @@ class GenderButton extends StatelessWidget {
                   label: Icon(
                     Icons.female,
                     size: 25,
-                    color: Theme.of(context).colorScheme.tertiary,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
               ],

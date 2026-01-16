@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:workspace/models/pet.dart';
+import 'package:workspace/models/hive/pet.dart';
 
 class ImageUtil {
   static final ImageUtil _instance = ImageUtil._internal();

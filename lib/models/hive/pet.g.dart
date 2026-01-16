@@ -19,9 +19,9 @@ class PetAdapter extends TypeAdapter<Pet> {
     return Pet(
       name: fields[0] as String,
       species: fields[1] as String,
-      breed: fields[2] as String,
+      breed: fields[2] as String?,
       gender: fields[3] as String,
-      birthdayMillis: (fields[4] as num).toInt(),
+      birthdayMillis: (fields[4] as num?)?.toInt(),
       imagePath: fields[5] as String?,
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:workspace/app/components/app_body.dart';
-import 'package:workspace/app/components/app_drawer.dart';
+import 'package:workspace/app/app_body.dart';
+import 'package:workspace/app/app_drawer.dart';
 import 'package:workspace/pets/pet_form.dart';
 
 class HomePage extends StatelessWidget {

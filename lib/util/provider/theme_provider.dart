@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workspace/data/settings_database.dart';
-import 'package:workspace/models/settings.dart';
+import 'package:workspace/models/hive/settings.dart';
 
 class ThemeProvider extends ChangeNotifier {
   final SettingsDatabase _db;

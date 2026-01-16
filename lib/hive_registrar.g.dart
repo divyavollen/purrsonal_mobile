@@ -3,8 +3,8 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
-import 'package:workspace/models/pet.dart';
-import 'package:workspace/models/settings.dart';
+import 'package:workspace/models/hive/pet.dart';
+import 'package:workspace/models/hive/settings.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {

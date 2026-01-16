@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:workspace/app/components/app_dimensions.dart';
+import 'package:workspace/app/theme/app_dimensions.dart';
 
 class AppTheme {
   static final ThemeData light = ThemeData(
@@ -12,7 +12,8 @@ class AppTheme {
       secondaryContainer: Color.fromRGBO(217, 234, 243, 1),
       tertiaryContainer: Color.fromRGBO(177, 201, 214, 1),
       primary: Color.fromRGBO(122, 180, 214, 1),
-      tertiary: Color.fromRGBO(225, 115, 140, 1),
+      secondary: Color.fromRGBO(225, 115, 140, 1),
+      tertiary: Colors.grey[500],
       surfaceContainerHighest: Color.fromARGB(255, 222, 229, 233),
       onSurface: Colors.grey[900],
       onSurfaceVariant: Colors.grey[600],

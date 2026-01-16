@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:workspace/app/components/app_dimensions.dart';
+import 'package:workspace/app/theme/app_dimensions.dart';
 
 class ImageField extends StatelessWidget {
   final File? image;

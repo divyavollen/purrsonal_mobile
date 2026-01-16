@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:workspace/app/components/app_dimensions.dart';
-import 'package:workspace/models/pet.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:workspace/app/theme/app_dimensions.dart';
+import 'package:workspace/models/hive/pet.dart';
 import 'package:workspace/pets/components/pet_tile_action.dart';
 import 'package:workspace/util/app_logger.dart';
 import 'package:workspace/util/image_util.dart';
@@ -75,17 +76,47 @@ class PetTile extends StatelessWidget {
             "No furry friends yet!",
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: smallFontSize,
+              fontSize: subTextFontSize,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            "Add your pet to see them here.",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: xsmallFontSize,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+
+          Text.rich(
+            TextSpan(
+              style: TextStyle(
+                fontSize: buttonTextFontSize,
+              ),
+              children: [
+                TextSpan(
+                  text: 'Tap ',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Theme.of(
+                        context,
+                      ).floatingActionButtonTheme.backgroundColor,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Icon(
+                      Icons.add,
+                      size: 15,
+                    ),
+                  ),
+                ),
+                TextSpan(
+                  text: ' to add a new pet.',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -110,54 +141,95 @@ class PetTile extends StatelessWidget {
         ),
       ),
 
-      child: Center(
-        child: Container(
-          height: petTileImgSize,
-          width: petTileImgSize,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: pet.gender == 'M'
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.tertiary,
-              width: 3,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 3.0),
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    child: Icon(
+                      FontAwesomeIcons.solidHeart,
+                      size: 12,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.tertiaryContainer,
+                    ),
+                  ),
+                  TextSpan(
+                    text: ' ${pet.name} ',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
+                  ),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    child: Icon(
+                      FontAwesomeIcons.solidHeart,
+                      size: 12,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.tertiaryContainer,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            shape: BoxShape.circle,
           ),
 
-          child: ClipOval(
-            child: Container(
-              decoration: BoxDecoration(
-                color: hasNoImage
-                    ? Theme.of(
-                        context,
-                      ).colorScheme.surfaceContainerHighest
-                    : Colors.transparent,
-                shape: BoxShape.circle,
+          Container(
+            height: petTileImgSize,
+            width: petTileImgSize,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: pet.gender == 'M'
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.secondary,
+                width: 3,
               ),
-              child: hasNoImage
-                  ? Icon(
-                      Icons.image_not_supported,
-                      size: 50,
-                      color: Theme.of(context).colorScheme.primary,
-                    )
-                  : Image.file(
-                      imageFile!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        appLogger.e(
-                          "Image missing :",
-                          error: error,
-                          stackTrace: stackTrace,
-                        );
-                        return const Icon(
-                          Icons.broken_image,
-                          size: 50,
-                        );
-                      },
-                    ),
+              shape: BoxShape.circle,
+            ),
+
+            child: ClipOval(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: hasNoImage
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest
+                      : Colors.transparent,
+                  shape: BoxShape.circle,
+                ),
+                child: hasNoImage
+                    ? Icon(
+                        Icons.image_not_supported,
+                        size: 50,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : Image.file(
+                        imageFile!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          appLogger.e(
+                            "Image missing :",
+                            error: error,
+                            stackTrace: stackTrace,
+                          );
+                          return const Icon(
+                            Icons.broken_image,
+                            size: 50,
+                          );
+                        },
+                      ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -5,12 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
-import 'package:workspace/models/pet.dart';
+import 'package:workspace/models/hive/pet.dart';
 import 'package:workspace/pets/components/add_pet_input_builder.dart';
 import 'package:workspace/pets/components/gender_button.dart';
 import 'package:workspace/pets/components/img_field.dart';
 import 'package:workspace/pets/components/img_src_provider.dart';
-import 'package:workspace/pets/components/pet_birthday_picker.dart';
+import 'package:workspace/pets/components/pet_birthday_field.dart';
 import 'package:workspace/util/image_util.dart';
 import 'package:workspace/util/validator/pet_validator.dart';
 
@@ -82,7 +82,7 @@ class _PetFormState extends State<PetForm> {
     }
   }
 
-  void _onBirthdayPick() async {
+  void _showDatePicker() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -220,9 +220,9 @@ class _PetFormState extends State<PetForm> {
                   ),
                   const SizedBox(height: 15),
 
-                  PetBirthdayPicker(
+                  PetBirthdayField(
                     currentMs: _currentPet.birthdayMillis,
-                    onTap: _onBirthdayPick,
+                    showCalendar: _showDatePicker,
                   ),
                   const SizedBox(height: 15),
 

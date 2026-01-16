@@ -1,5 +1,5 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:workspace/models/pet.dart';
+import 'package:workspace/models/hive/pet.dart';
 
 class PetDatabase {
   final Box<Pet> _petBox;
