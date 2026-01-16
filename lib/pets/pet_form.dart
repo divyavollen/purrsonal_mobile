@@ -167,25 +167,32 @@ class _PetFormState extends State<PetForm> {
                 horizontal: 20.0,
                 vertical: 20.0,
               ),
+
               child: Column(
                 children: [
                   ImageField(
                     image: _displayImage,
 
-                    showPicker: (ctx) => showModalBottomSheet(
-                      context: ctx,
-                      builder: (_) => ImageSourceProvider(
-                        pickImage: _onPickImage,
-                        isUploaded: _displayImage != null ? true : false,
-                        clearImage: () => {
-                          setState(() {
-                            _displayImage = null;
-                            _currentPet.imagePath = null;
-                          }),
-                        },
-                      ),
-                      showDragHandle: null,
-                    ),
+                    showPicker: (ctx) {
+                      if (!mounted) return;
+
+                      FocusScope.of(context).unfocus();
+
+                      showModalBottomSheet(
+                        context: context,
+                        showDragHandle: true,
+                        builder: (context) => ImageSourceProvider(
+                          pickImage: _onPickImage,
+                          isUploaded: _displayImage != null,
+                          clearImage: () {
+                            setState(() {
+                              _displayImage = null;
+                              _currentPet.imagePath = null;
+                            });
+                          },
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 15),
 

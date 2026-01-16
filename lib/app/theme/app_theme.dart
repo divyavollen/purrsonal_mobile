@@ -9,14 +9,16 @@ class AppTheme {
 
     colorScheme: ColorScheme.fromSeed(
       seedColor: const Color.fromRGBO(204, 230, 245, 1),
-      secondaryContainer: Color.fromRGBO(217, 234, 243, 1),
+      primaryContainer: Color.fromRGBO(217, 234, 243, 1),
+      secondaryContainer: Color.fromRGBO(238, 211, 216, 1),
       tertiaryContainer: Color.fromRGBO(177, 201, 214, 1),
       primary: Color.fromRGBO(122, 180, 214, 1),
       secondary: Color.fromRGBO(225, 115, 140, 1),
-      tertiary: Colors.grey[500],
+      tertiary: Colors.grey[400],
       surfaceContainerHighest: Color.fromARGB(255, 222, 229, 233),
       onSurface: Colors.grey[900],
       onSurfaceVariant: Colors.grey[600],
+      outline: Colors.grey[900],
       error: const Color.fromARGB(255, 207, 1, 39),
     ),
 
@@ -78,8 +80,7 @@ class AppTheme {
     ),
 
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: const Color.fromRGBO(241, 163, 181, 1),
-      splashColor: const Color.fromRGBO(225, 115, 140, 1),
+      backgroundColor: const Color.fromARGB(255, 245, 182, 197),
       foregroundColor: Colors.grey[800],
       elevation: 0,
       extendedTextStyle: TextStyle(
@@ -94,7 +95,7 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         elevation: 0,
         shadowColor: Colors.transparent,
-        backgroundColor: const Color.fromRGBO(241, 163, 181, 1),
+        backgroundColor: const Color.fromARGB(255, 245, 182, 197),
         foregroundColor: Colors.grey[800],
         shape: RoundedRectangleBorder(borderRadius: brSmall),
         minimumSize: const Size(double.infinity, 56),
@@ -134,14 +135,18 @@ class AppTheme {
     brightness: Brightness.dark,
 
     colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color.fromRGBO(176, 206, 218, 1),
       brightness: Brightness.dark,
-      secondaryContainer: const Color.fromRGBO(37, 45, 52, 1),
+      seedColor: const Color.fromRGBO(176, 206, 218, 1),
+      primaryContainer: const Color.fromRGBO(37, 45, 52, 1),
+      secondaryContainer: const Color.fromARGB(255, 104, 79, 85),
+      tertiaryContainer: const Color.fromRGBO(37, 45, 52, 1),
       primary: const Color.fromRGBO(176, 206, 218, 1),
-      tertiary: const Color.fromRGBO(243, 176, 190, 1),
+      secondary: const Color.fromRGBO(243, 176, 190, 1),
+      tertiary: Colors.grey[800],
       surfaceContainerHighest: const Color.fromRGBO(44, 44, 44, 1),
       onSurface: const Color.fromRGBO(225, 227, 229, 1),
       onSurfaceVariant: const Color.fromRGBO(175, 179, 183, 1),
+      outline: const Color.fromARGB(255, 27, 27, 27),
       error: const Color.fromRGBO(207, 102, 121, 1),
     ),
 
@@ -207,14 +212,13 @@ class AppTheme {
     ),
 
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: const Color.fromRGBO(243, 176, 190, 1),
-      splashColor: const Color.fromRGBO(225, 115, 140, 1),
+      backgroundColor: const Color.fromARGB(255, 170, 125, 134),
       foregroundColor: const Color.fromRGBO(33, 33, 33, 1),
       elevation: 0,
       extendedTextStyle: TextStyle(
         fontSize: mainTextFontSize,
         fontWeight: FontWeight.bold,
-        color: Color.fromRGBO(33, 33, 33, 1),
+        color: Color.fromRGBO(66, 66, 66, 1),
       ),
       iconSize: 28.0,
     ),
@@ -223,7 +227,7 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         elevation: 0,
         shadowColor: Colors.transparent,
-        backgroundColor: const Color.fromRGBO(243, 176, 190, 1),
+        backgroundColor: const Color.fromARGB(255, 170, 125, 134),
         foregroundColor: const Color.fromRGBO(33, 33, 33, 1),
         shape: RoundedRectangleBorder(
           borderRadius: brSmall,

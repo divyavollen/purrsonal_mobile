@@ -9,6 +9,7 @@ import 'package:workspace/app/theme/app_theme.dart';
 import 'package:workspace/data/settings_database.dart';
 import 'package:workspace/models/hive/pet.dart';
 import 'package:workspace/models/hive/settings.dart';
+import 'package:workspace/pets/pet_detail.dart';
 import 'package:workspace/util/app_logger.dart';
 import 'package:workspace/util/image_util.dart';
 import 'package:workspace/util/provider/theme_provider.dart';
@@ -80,6 +81,22 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.dark,
 
       home: HomePage(),
+
+      initialRoute: '/home',
+
+      routes: {
+        '/home': (context) => HomePage(),
+      },
+
+      onGenerateRoute: (settings) {
+        if (settings.name == '/pet') {
+          final pet = settings.arguments as Pet;
+          return MaterialPageRoute(
+            builder: (context) => PetDetails(pet: pet),
+          );
+        }
+        return null;
+      },
     );
   }
 }

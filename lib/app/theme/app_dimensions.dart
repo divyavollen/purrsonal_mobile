@@ -4,7 +4,7 @@ const double petTileWidthMult = 0.5;
 const double petTileHeightMult = 0.8;
 const double petTileMargin = 30.0;
 const double petTileImgSize = 130;
-const double noPetsIconSize = 50;
+const double noPetsIconSize = 80;
 
 const double petListHeightMult = 0.27;
 

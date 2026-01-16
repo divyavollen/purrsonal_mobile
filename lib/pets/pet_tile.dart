@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:workspace/app/theme/app_dimensions.dart';
 import 'package:workspace/models/hive/pet.dart';
 import 'package:workspace/pets/components/pet_tile_action.dart';
@@ -37,20 +36,22 @@ class PetTile extends StatelessWidget {
           return LayoutBuilder(
             builder: (context, constraints) {
               double parentHeight = constraints.maxHeight;
-
+              final pet = petList![index];
               return Center(
                 child: Container(
                   margin: const EdgeInsets.only(right: petTileMargin),
                   width: screenWidth * petTileWidthMult,
                   height: parentHeight * petTileHeightMult,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    color: pet.gender == 'M'
+                        ? Theme.of(context).colorScheme.primaryContainer
+                        : Theme.of(context).colorScheme.secondaryContainer,
                     borderRadius: brMedium,
                   ),
 
                   child: isEmpty
                       ? _buildEmptyState(context)
-                      : _buildPetState(context, petList![index]),
+                      : _buildPetState(context, pet),
                 ),
               );
             },
@@ -130,6 +131,13 @@ class PetTile extends StatelessWidget {
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
+
+      onTap: () => Navigator.pushNamed(
+        context,
+        '/pet',
+        arguments: pet,
+      ),
+
       onLongPress: () => showModalBottomSheet(
         context: context,
         builder: (context) => PetTileAction(
@@ -142,90 +150,62 @@ class PetTile extends StatelessWidget {
       ),
 
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 3.0),
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment.middle,
-                    child: Icon(
-                      FontAwesomeIcons.solidHeart,
-                      size: 12,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.tertiaryContainer,
-                    ),
-                  ),
-                  TextSpan(
-                    text: ' ${pet.name} ',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.tertiary,
-                    ),
-                  ),
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment.middle,
-                    child: Icon(
-                      FontAwesomeIcons.solidHeart,
-                      size: 12,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.tertiaryContainer,
-                    ),
-                  ),
-                ],
+          Material(
+            elevation: 2,
+            shadowColor: Theme.of(context).colorScheme.outline,
+            child: SizedBox(
+              width: double.infinity,
+              child: Text(
+                pet.name.toUpperCase(),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  letterSpacing: 1.5,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
 
-          Container(
-            height: petTileImgSize,
-            width: petTileImgSize,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: pet.gender == 'M'
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
-                width: 3,
-              ),
-              shape: BoxShape.circle,
-            ),
-
-            child: ClipOval(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: hasNoImage
-                      ? Theme.of(
-                          context,
-                        ).colorScheme.surfaceContainerHighest
-                      : Colors.transparent,
-                  shape: BoxShape.circle,
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0, bottom: 3.0),
+            child: SizedBox(
+              height: petTileImgSize,
+              width: petTileImgSize,
+              child: ClipOval(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: hasNoImage
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainer
+                        : Colors.transparent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: hasNoImage
+                      ? Icon(
+                          Icons.image_not_supported,
+                          size: noPetsIconSize,
+                          color: Theme.of(context).colorScheme.primary,
+                        )
+                      : Image.file(
+                          imageFile!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            appLogger.e(
+                              "Image missing :",
+                              error: error,
+                              stackTrace: stackTrace,
+                            );
+                            return const Icon(
+                              Icons.broken_image,
+                              size: 50,
+                            );
+                          },
+                        ),
                 ),
-                child: hasNoImage
-                    ? Icon(
-                        Icons.image_not_supported,
-                        size: 50,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : Image.file(
-                        imageFile!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          appLogger.e(
-                            "Image missing :",
-                            error: error,
-                            stackTrace: stackTrace,
-                          );
-                          return const Icon(
-                            Icons.broken_image,
-                            size: 50,
-                          );
-                        },
-                      ),
               ),
             ),
           ),

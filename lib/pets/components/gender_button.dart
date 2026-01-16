@@ -39,7 +39,9 @@ class GenderButton extends StatelessWidget {
               style: SegmentedButton.styleFrom(
                 side: BorderSide.none,
                 padding: EdgeInsets.zero,
-
+                selectedBackgroundColor: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero,
                 ),
