@@ -11,10 +11,16 @@ class AppTheme {
       seedColor: const Color.fromRGBO(204, 230, 245, 1),
       primaryContainer: Color.fromRGBO(217, 234, 243, 1),
       secondaryContainer: Color.fromRGBO(238, 211, 216, 1),
-      tertiaryContainer: Color.fromRGBO(177, 201, 214, 1),
+      tertiaryContainer: Color.fromRGBO(216, 223, 228, 1),
       primary: Color.fromRGBO(122, 180, 214, 1),
       secondary: Color.fromRGBO(225, 115, 140, 1),
       tertiary: Colors.grey[400],
+      tertiaryFixed: Color.fromRGBO(
+        61,
+        127,
+        165,
+        1,
+      ), //TODO add this to dark theme
       surfaceContainerHighest: Color.fromARGB(255, 222, 229, 233),
       onSurface: Colors.grey[900],
       onSurfaceVariant: Colors.grey[600],
@@ -110,7 +116,8 @@ class AppTheme {
       style: TextButton.styleFrom(
         textStyle: TextStyle(
           fontSize: buttonTextFontSize,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1,
         ),
       ),
     ),

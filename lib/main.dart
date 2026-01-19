@@ -4,12 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:workspace/app/home_page.dart';
 import 'package:workspace/app/theme/app_theme.dart';
+import 'package:workspace/app_router_config.dart';
 import 'package:workspace/data/settings_database.dart';
 import 'package:workspace/models/hive/pet.dart';
 import 'package:workspace/models/hive/settings.dart';
-import 'package:workspace/pets/pet_detail.dart';
+import 'package:workspace/provider/pet_provider.dart';
 import 'package:workspace/util/app_logger.dart';
 import 'package:workspace/util/image_util.dart';
 import 'package:workspace/util/provider/theme_provider.dart';
@@ -43,8 +43,16 @@ void main() async {
       };
 
       runApp(
-        ChangeNotifierProvider(
-          create: (_) => ThemeProvider(settingsDatabase),
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => ThemeProvider(settingsDatabase),
+            ),
+
+            ChangeNotifierProvider(
+              create: (_) => PetProvider(),
+            ),
+          ],
           child: const MyApp(),
         ),
       );
@@ -72,7 +80,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
 
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Purrsonal',
 
@@ -80,23 +88,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
 
-      home: HomePage(),
-
-      initialRoute: '/home',
-
-      routes: {
-        '/home': (context) => HomePage(),
-      },
-
-      onGenerateRoute: (settings) {
-        if (settings.name == '/pet') {
-          final pet = settings.arguments as Pet;
-          return MaterialPageRoute(
-            builder: (context) => PetDetails(pet: pet),
-          );
-        }
-        return null;
-      },
+      routerConfig: AppRouterConfig().router,
     );
   }
 }

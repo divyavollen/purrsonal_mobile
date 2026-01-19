@@ -2,22 +2,23 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hive_ce_flutter/adapters.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
+import 'package:provider/provider.dart';
 import 'package:workspace/models/hive/pet.dart';
 import 'package:workspace/pets/components/add_pet_input_builder.dart';
 import 'package:workspace/pets/components/gender_button.dart';
 import 'package:workspace/pets/components/img_field.dart';
 import 'package:workspace/pets/components/img_src_provider.dart';
 import 'package:workspace/pets/components/pet_birthday_field.dart';
+import 'package:workspace/provider/pet_provider.dart';
 import 'package:workspace/util/image_util.dart';
 import 'package:workspace/util/validator/pet_validator.dart';
 
 class PetForm extends StatefulWidget {
   final String mode;
   final Pet? pet;
-  final Function(BuildContext)? onDelete;
+  final void Function(BuildContext)? onDelete;
 
   const PetForm({
     super.key,
@@ -37,9 +38,9 @@ class PetForm extends StatefulWidget {
 
 class _PetFormState extends State<PetForm> {
   final _formKey = GlobalKey<FormState>();
-  final Box<Pet> _petBox = Hive.box<Pet>('pets');
   bool _isEditMode = false;
-  late File? _displayImage;
+
+  File? _displayImage;
   late Pet _currentPet;
 
   @override
@@ -51,7 +52,7 @@ class _PetFormState extends State<PetForm> {
       _currentPet = widget.pet!.copyWith();
       _getisplayImage();
     } else {
-      _currentPet = _currentPet = Pet.empty();
+      _currentPet = Pet.empty();
       _displayImage = null;
     }
   }
@@ -70,10 +71,12 @@ class _PetFormState extends State<PetForm> {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState!.save();
 
+      final provider = context.read<PetProvider>();
+
       if (_isEditMode) {
-        await _petBox.put(widget.pet!.key, _currentPet);
+        provider.updatePet(widget.pet!, _currentPet);
       } else {
-        await _petBox.add(_currentPet);
+        provider.addPet(_currentPet);
       }
 
       if (!mounted) return;
@@ -98,7 +101,8 @@ class _PetFormState extends State<PetForm> {
   }
 
   Future<void> _getisplayImage() async {
-    if (_currentPet.imagePath == null) {
+    if (_currentPet.imagePath == null ||
+        _currentPet.imagePath!.trim().isEmpty) {
       return;
     }
 
@@ -131,6 +135,7 @@ class _PetFormState extends State<PetForm> {
         key: _formKey,
 
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             title: Text(_isEditMode ? 'Edit Pet' : 'New Pet'),
             leadingWidth: 40,
@@ -154,7 +159,7 @@ class _PetFormState extends State<PetForm> {
                   ),
                   tooltip: 'Delete pet',
                   onPressed: () {
-                    widget.onDelete?.call(context);
+                    widget.onDelete!(context);
                   },
                 ),
             ],
@@ -162,6 +167,7 @@ class _PetFormState extends State<PetForm> {
 
           body: SingleChildScrollView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 20.0,

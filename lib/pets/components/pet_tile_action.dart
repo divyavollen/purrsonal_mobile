@@ -29,8 +29,8 @@ class PetTileAction extends StatelessWidget {
           title: Text('Delete Pet'),
           onTap: () => ConfirmationAlertDialog.showConfirmation(
             context,
-            button1: 'Cancel',
-            button2: 'Continue',
+            button1: 'CANCEL',
+            button2: 'DELETE',
             confirmationMessage: 'Are you sure you want to delete this pet?',
             icon: Icons.warning,
             onPressed: () => onDelete(),

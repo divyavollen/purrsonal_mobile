@@ -1,19 +1,18 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:workspace/app/theme/app_dimensions.dart';
 import 'package:workspace/models/hive/pet.dart';
+import 'package:workspace/pets/components/pet_img_container.dart';
 import 'package:workspace/pets/components/pet_tile_action.dart';
+import 'package:workspace/provider/pet_provider.dart';
 import 'package:workspace/util/app_logger.dart';
-import 'package:workspace/util/image_util.dart';
 
 class PetTile extends StatelessWidget {
-  final List<Pet>? petList;
   final ScrollController scrollController;
 
   const PetTile({
     super.key,
-    this.petList,
     required this.scrollController,
   });
 
@@ -22,42 +21,49 @@ class PetTile extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    bool isEmpty = petList == null || petList!.isEmpty;
+    return Consumer<PetProvider>(
+      builder: (context, value, child) {
+        bool isEmpty = value.pets.isEmpty;
+        final petList = value.pets;
 
-    return Container(
-      height: screenHeight * petListHeightMult,
-      padding: EdgeInsets.only(left: 8),
-      child: ListView.builder(
-        controller: scrollController,
-        itemCount: isEmpty ? 1 : petList!.length,
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.only(left: 10),
-        itemBuilder: (context, index) {
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              double parentHeight = constraints.maxHeight;
-              final pet = petList![index];
-              return Center(
-                child: Container(
-                  margin: const EdgeInsets.only(right: petTileMargin),
-                  width: screenWidth * petTileWidthMult,
-                  height: parentHeight * petTileHeightMult,
-                  decoration: BoxDecoration(
-                    color: pet.gender == 'M'
-                        ? Theme.of(context).colorScheme.primaryContainer
-                        : Theme.of(context).colorScheme.secondaryContainer,
-                    borderRadius: brMedium,
-                  ),
+        return Container(
+          height: screenHeight * petListHeightMult,
+          padding: EdgeInsets.only(left: 8),
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: isEmpty ? 1 : petList.length,
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.only(left: 10),
+            itemBuilder: (context, index) {
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  double parentHeight = constraints.maxHeight;
+                  final pet = isEmpty ? null : petList[index];
+                  return Center(
+                    child: Container(
+                      margin: const EdgeInsets.only(right: petTileMargin),
+                      width: screenWidth * petTileWidthMult,
+                      height: parentHeight * petTileHeightMult,
+                      decoration: BoxDecoration(
+                        color: isEmpty
+                            ? Theme.of(context).colorScheme.primaryContainer
+                            : pet!.gender == 'M'
+                            ? Theme.of(context).colorScheme.primaryContainer
+                            : Theme.of(context).colorScheme.secondaryContainer,
+                        borderRadius: brMedium,
+                      ),
 
-                  child: isEmpty
-                      ? _buildEmptyState(context)
-                      : _buildPetState(context, pet),
-                ),
+                      child: isEmpty
+                          ? _buildEmptyState(context)
+                          : _buildPetState(context, pet!),
+                    ),
+                  );
+                },
               );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -108,6 +114,9 @@ class PetTile extends StatelessWidget {
                     child: Icon(
                       Icons.add,
                       size: 15,
+                      color: Theme.of(
+                        context,
+                      ).floatingActionButtonTheme.extendedTextStyle!.color,
                     ),
                   ),
                 ),
@@ -126,27 +135,41 @@ class PetTile extends StatelessWidget {
   }
 
   Widget _buildPetState(BuildContext context, Pet pet) {
-    File? imageFile = ImageUtil().getImage(pet);
-    bool hasNoImage = pet.imagePath == null || pet.imagePath!.trim().isEmpty;
-
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
 
-      onTap: () => Navigator.pushNamed(
-        context,
-        '/pet',
-        arguments: pet,
-      ),
+      onTap: () {
+        appLogger.i("Pet selected ${pet.toString()} with key: ${pet.key}");
+
+        context.pushNamed(
+          'pet-info',
+          pathParameters: {'petId': pet.key.toString()},
+        );
+      },
 
       onLongPress: () => showModalBottomSheet(
         context: context,
-        builder: (context) => PetTileAction(
-          onDelete: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-            pet.delete();
-          },
-        ),
+        builder: (sheetContext) {
+          final messenger = ScaffoldMessenger.of(context);
+
+          return PetTileAction(
+            onDelete: () {
+              Navigator.of(
+                context,
+                rootNavigator: true,
+              ).pop(); //close confirmation dialog
+              Navigator.of(sheetContext).pop(); //close PetTileAction
+              context.read<PetProvider>().deletePet(pet);
+              messenger.showSnackBar(
+                const SnackBar(
+                  content: Text('Pet deleted successfully!'),
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            },
+          );
+        },
       ),
 
       child: Column(
@@ -171,43 +194,7 @@ class PetTile extends StatelessWidget {
 
           Padding(
             padding: const EdgeInsets.only(top: 10.0, bottom: 3.0),
-            child: SizedBox(
-              height: petTileImgSize,
-              width: petTileImgSize,
-              child: ClipOval(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: hasNoImage
-                        ? Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainer
-                        : Colors.transparent,
-                    shape: BoxShape.circle,
-                  ),
-                  child: hasNoImage
-                      ? Icon(
-                          Icons.image_not_supported,
-                          size: noPetsIconSize,
-                          color: Theme.of(context).colorScheme.primary,
-                        )
-                      : Image.file(
-                          imageFile!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            appLogger.e(
-                              "Image missing :",
-                              error: error,
-                              stackTrace: stackTrace,
-                            );
-                            return const Icon(
-                              Icons.broken_image,
-                              size: 50,
-                            );
-                          },
-                        ),
-                ),
-              ),
-            ),
+            child: PetImageContainer(petId: pet.key),
           ),
         ],
       ),

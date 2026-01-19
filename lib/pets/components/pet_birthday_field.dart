@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:workspace/util/date_util.dart';
 
 class PetBirthdayField extends StatelessWidget {
   final void Function()? showCalendar;
@@ -13,11 +13,9 @@ class PetBirthdayField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final birthday = currentMs;
-
     return TextFormField(
       key: ValueKey(currentMs),
-      initialValue: _formatDate(birthday),
+      initialValue: DateUtil().formatDate(currentMs),
       decoration: InputDecoration(
         labelText: 'Birthday',
       ),
@@ -28,12 +26,5 @@ class PetBirthdayField extends StatelessWidget {
       readOnly: true,
       onTap: showCalendar,
     );
-  }
-
-  String _formatDate(int? ms) {
-    if (ms == null || ms < 1) return '';
-
-    var dt = DateTime.fromMillisecondsSinceEpoch(ms);
-    return DateFormat('MM/dd/yyyy, hh:mm a').format(dt);
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:workspace/models/hive/pet.dart';
+import 'package:provider/provider.dart';
 import 'package:workspace/pets/pet_tile.dart';
+import 'package:workspace/provider/pet_provider.dart';
 
 class AppBody extends StatefulWidget {
   const AppBody({super.key});
@@ -15,22 +15,17 @@ class AppBodyState extends State<AppBody> {
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<double> _scrollOffset = ValueNotifier<double>(0.0);
   int _prevCount = 0;
-  late Box<Pet> _petBox;
 
   @override
   void initState() {
     super.initState();
-    _petBox = Hive.box<Pet>('pets');
     _scrollController.addListener(() {
       _scrollOffset.value = _scrollController.offset;
     });
-    _petBox.listenable().addListener(_handleDatabaseChange);
-    _prevCount = _petBox.length;
   }
 
   @override
   void dispose() {
-    _petBox.listenable().removeListener(_handleDatabaseChange);
     _scrollController.dispose();
     _scrollOffset.dispose();
     super.dispose();
@@ -59,31 +54,19 @@ class AppBodyState extends State<AppBody> {
             ],
           ),
 
-          ValueListenableBuilder(
-            valueListenable: _petBox.listenable(),
-            builder: (BuildContext context, Box<Pet> box, Widget? child) {
-              final currentPets = box.values.toList();
+          Consumer<PetProvider>(
+            builder: (context, value, child) {
+              if (value.count > _prevCount) {
+                scrollToEnd();
+              }
+              _prevCount = value.count;
 
-              return PetTile(
-                petList: currentPets,
-                scrollController: _scrollController,
-              );
+              return PetTile(scrollController: _scrollController);
             },
           ),
         ],
       ),
     );
-  }
-
-  void _handleDatabaseChange() {
-    final int newCount = _petBox.length;
-
-    if (newCount > _prevCount) {
-      _prevCount = newCount;
-      scrollToEnd();
-    } else {
-      _prevCount = newCount;
-    }
   }
 
   void scrollToEnd() {
