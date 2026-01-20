@@ -4,15 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:workspace/app/theme/app_theme.dart';
-import 'package:workspace/app_router_config.dart';
-import 'package:workspace/data/settings_database.dart';
-import 'package:workspace/models/hive/pet.dart';
-import 'package:workspace/models/hive/settings.dart';
-import 'package:workspace/provider/pet_provider.dart';
-import 'package:workspace/util/app_logger.dart';
-import 'package:workspace/util/image_util.dart';
-import 'package:workspace/util/provider/theme_provider.dart';
+import 'package:workspace/core/router/app_router_config.dart';
+import 'package:workspace/core/theme/app_theme.dart';
+import 'package:workspace/core/theme/theme_provider.dart';
+import 'package:workspace/core/utils/app_logger.dart';
+import 'package:workspace/core/utils/image_util.dart';
+import 'package:workspace/data/database/settings_database.dart';
+import 'package:workspace/data/models/hive/pet.dart';
+import 'package:workspace/data/models/hive/settings.dart';
+import 'package:workspace/features/pets/providers/pet_provider.dart';
 
 late SettingsDatabase settingsDatabase;
 

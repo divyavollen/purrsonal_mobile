@@ -3,11 +3,13 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
-import 'package:workspace/models/hive/pet.dart';
-import 'package:workspace/models/hive/settings.dart';
+import 'package:workspace/data/models/hive/event.dart';
+import 'package:workspace/data/models/hive/pet.dart';
+import 'package:workspace/data/models/hive/settings.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
+    registerAdapter(EventAdapter());
     registerAdapter(PetAdapter());
     registerAdapter(SettingsAdapter());
   }
@@ -15,6 +17,7 @@ extension HiveRegistrar on HiveInterface {
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
+    registerAdapter(EventAdapter());
     registerAdapter(PetAdapter());
     registerAdapter(SettingsAdapter());
   }
