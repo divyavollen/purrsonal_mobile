@@ -9,11 +9,11 @@ import 'package:workspace/core/utils/image_util.dart';
 import 'package:workspace/data/models/hive/pet.dart';
 import 'package:workspace/features/pets/providers/pet_provider.dart';
 import 'package:workspace/features/pets/validators/pet_validator.dart';
-import 'package:workspace/features/pets/widgets/add_pet_input_builder.dart';
-import 'package:workspace/features/pets/widgets/gender_button.dart';
-import 'package:workspace/features/pets/widgets/img_field.dart';
-import 'package:workspace/features/pets/widgets/img_src_provider.dart';
-import 'package:workspace/features/pets/widgets/pet_birthday_field.dart';
+import 'package:workspace/features/pets/widgets/form/add_pet_input_builder.dart';
+import 'package:workspace/features/pets/widgets/form/gender_button.dart';
+import 'package:workspace/features/pets/widgets/form/img_field.dart';
+import 'package:workspace/features/pets/widgets/form/img_src_provider.dart';
+import 'package:workspace/features/pets/widgets/form/pet_birthday_field.dart';
 
 class PetForm extends StatefulWidget {
   final String mode;

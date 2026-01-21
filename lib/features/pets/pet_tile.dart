@@ -5,7 +5,7 @@ import 'package:workspace/core/constants/app_dimensions.dart';
 import 'package:workspace/core/utils/app_logger.dart';
 import 'package:workspace/data/models/hive/pet.dart';
 import 'package:workspace/features/pets/providers/pet_provider.dart';
-import 'package:workspace/features/pets/widgets/pet_img_container.dart';
+import 'package:workspace/features/pets/widgets/form/pet_img_container.dart';
 import 'package:workspace/features/pets/widgets/pet_tile_action.dart';
 
 class PetTile extends StatelessWidget {

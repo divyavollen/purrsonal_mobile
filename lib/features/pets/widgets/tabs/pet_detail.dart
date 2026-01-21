@@ -3,7 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:workspace/data/models/hive/pet.dart';
+import 'package:workspace/features/pets/providers/calendar_selection_provider.dart';
 import 'package:workspace/features/pets/providers/pet_provider.dart';
+import 'package:workspace/features/pets/widgets/calendar/appointment_editor.dart';
 
 class PetDetails extends StatelessWidget {
   final String petId;
@@ -55,6 +57,27 @@ class PetDetails extends StatelessWidget {
         ],
         onDestinationSelected: (value) => navigationShell.goBranch(value),
       ),
+
+      floatingActionButton: navigationShell.currentIndex == 1
+          ? FloatingActionButton(
+              onPressed: () {
+                final selectedDate = context
+                    .read<CalendarSelectionProvider>()
+                    .selectedDate;
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AppointmentEditor(
+                      selectedDate: selectedDate,
+                      petId: petId,
+                    ),
+                  ),
+                );
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

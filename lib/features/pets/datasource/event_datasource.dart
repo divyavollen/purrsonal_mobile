@@ -1,10 +1,10 @@
 import 'dart:ui';
 
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:workspace/data/models/hive/event.dart';
+import 'package:workspace/data/models/hive/pet_appointment.dart';
 
 class EventDatasource extends CalendarDataSource {
-  EventDatasource(List<Event> source) {
+  EventDatasource(List<PetAppointment> source) {
     appointments = source;
   }
 

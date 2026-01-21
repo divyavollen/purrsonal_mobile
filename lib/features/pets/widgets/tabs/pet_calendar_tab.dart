@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:workspace/features/pets/widgets/calendar/appointment_editor.dart';
+import 'package:workspace/features/pets/providers/calendar_selection_provider.dart';
 import 'package:workspace/features/pets/widgets/calendar/custom_header.dart';
 import 'package:workspace/features/pets/widgets/calendar/schedule_view_month_header.dart';
 
@@ -49,6 +50,14 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
               });
             },
 
+            onSelectionChanged: (calendarSelectionDetails) => {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                context.read<CalendarSelectionProvider>().updateDate(
+                  calendarSelectionDetails.date!,
+                );
+              }),
+            },
+
             showCurrentTimeIndicator: true,
             firstDayOfWeek: 1,
             initialSelectedDate: DateTime.now(),
@@ -69,6 +78,7 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
             ],
             monthViewSettings: const MonthViewSettings(
               appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+              showAgenda: true,
             ),
             scheduleViewSettings: const ScheduleViewSettings(
               appointmentItemHeight: 60,
@@ -80,17 +90,17 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
                 CustomScheduleViewMonthHeader(details: details),
 
             //dataSource: EventDatasource(_getDataSource()),
-            onTap: (CalendarTapDetails details) {
-              if (details.targetElement == CalendarElement.calendarCell ||
-                  details.targetElement == CalendarElement.appointment) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AppointmentEditor(),
-                  ),
-                );
-              }
-            },
+            // onTap: (CalendarTapDetails details) {
+            //   if (details.targetElement == CalendarElement.calendarCell ||
+            //       details.targetElement == CalendarElement.appointment) {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => AppointmentEditor(),
+            //       ),
+            //     );
+            //   }
+            // },
           ),
         ),
       ],
