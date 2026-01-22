@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
 
-class AppointmentProvider extends ChangeNotifier {
-  final Box<PetAppointment> _evtBox = Hive.box<PetAppointment>('events');
+class PetAppointmentProvider extends ChangeNotifier {
+  final Box<PetAppointment> _evtBox = Hive.box<PetAppointment>('appointments');
 
   List<PetAppointment> get events => _evtBox.values.toList();
   int get count => _evtBox.length;
 
-  AppointmentProvider() {
+  PetAppointmentProvider() {
     _evtBox.listenable().addListener(notifyListeners);
   }
 

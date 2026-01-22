@@ -8,110 +8,73 @@ part 'pet_appointment.g.dart';
 @HiveType(typeId: 2)
 class PetAppointment extends HiveObject {
   @HiveField(0)
-  String eventName;
+  String? title;
 
   @HiveField(1)
-  DateTime? from;
+  String petId;
 
   @HiveField(2)
-  DateTime? to;
+  DateTime? from;
 
   @HiveField(3)
-  Color? background;
+  DateTime? to;
 
   @HiveField(4)
-  bool isAllDay;
+  Color? background;
 
   @HiveField(5)
-  String? description;
+  bool? isAllDay;
 
   @HiveField(6)
-  String recurrenceRule;
+  String? recurrenceRule;
+
+  @HiveField(7)
+  String? description;
 
   PetAppointment({
-    required this.eventName,
-    required this.from,
-    required this.to,
-    required this.background,
-    required this.isAllDay,
-    required this.description,
-    required this.recurrenceRule,
+    required this.title,
+    required this.petId,
+    this.from,
+    this.to,
+    this.background,
+    this.isAllDay,
+    this.recurrenceRule,
+    this.description,
   });
 
   PetAppointment.empty({
-    this.eventName = '',
+    this.title,
+    required this.petId,
     this.from,
     this.to,
     this.background,
     this.isAllDay = false,
+    this.recurrenceRule,
     this.description,
-    this.recurrenceRule = '',
   });
-
-  PetAppointment copyWith({
-    String? eventName,
-    DateTime? from,
-    DateTime? to,
-    Color? background,
-    bool? isAllDay,
-    String? description,
-    String? recurrenceRule,
-  }) {
-    return PetAppointment(
-      eventName: eventName ?? this.eventName,
-      from: from ?? this.from,
-      to: to ?? this.to,
-      background: background ?? this.background,
-      isAllDay: isAllDay ?? this.isAllDay,
-      description: description ?? this.description,
-      recurrenceRule: recurrenceRule ?? this.recurrenceRule,
-    );
-  }
 
   @override
   String toString() {
-    return 'PetAppointment(eventName: $eventName, from: $from, to: $to, background: $background, isAllDay: $isAllDay, description: $description, recurrenceRule: $recurrenceRule)';
-  }
-
-  @override
-  bool operator ==(covariant PetAppointment other) {
-    if (identical(this, other)) return true;
-
-    return other.eventName == eventName &&
-        other.from == from &&
-        other.to == to &&
-        other.background == background &&
-        other.isAllDay == isAllDay &&
-        other.description == description &&
-        other.recurrenceRule == recurrenceRule;
-  }
-
-  @override
-  int get hashCode {
-    return eventName.hashCode ^
-        from.hashCode ^
-        to.hashCode ^
-        background.hashCode ^
-        isAllDay.hashCode ^
-        description.hashCode ^
-        recurrenceRule.hashCode;
+    return 'PetAppointment(title: $title, petId: $petId, from: $from, to: $to, background: $background, isAllDay: $isAllDay, recurrenceRule: $recurrenceRule, description: $description)';
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'eventName': eventName,
+      'title': title,
+      'petId': petId,
       'from': from?.millisecondsSinceEpoch,
       'to': to?.millisecondsSinceEpoch,
-      'background': background?.toARGB32(),
+      'background': background?.value,
       'isAllDay': isAllDay,
-      'description': description,
       'recurrenceRule': recurrenceRule,
+      'description': description,
     };
   }
 
   factory PetAppointment.fromMap(Map<String, dynamic> map) {
     return PetAppointment(
-      eventName: map['eventName'] as String,
+      title: map['title'] as String,
+      petId: map['petId'] as String,
       from: map['from'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['from'] as int)
           : null,
@@ -121,11 +84,13 @@ class PetAppointment extends HiveObject {
       background: map['background'] != null
           ? Color(map['background'] as int)
           : null,
-      isAllDay: map['isAllDay'] as bool,
+      isAllDay: map['isAllDay'] != null ? map['isAllDay'] as bool : null,
+      recurrenceRule: map['recurrenceRule'] != null
+          ? map['recurrenceRule'] as String
+          : null,
       description: map['description'] != null
           ? map['description'] as String
           : null,
-      recurrenceRule: map['recurrenceRule'] as String,
     );
   }
 
@@ -133,4 +98,52 @@ class PetAppointment extends HiveObject {
 
   factory PetAppointment.fromJson(String source) =>
       PetAppointment.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  bool operator ==(covariant PetAppointment other) {
+    if (identical(this, other)) return true;
+
+    return other.title == title &&
+        other.petId == petId &&
+        other.from == from &&
+        other.to == to &&
+        other.background == background &&
+        other.isAllDay == isAllDay &&
+        other.recurrenceRule == recurrenceRule &&
+        other.description == description;
+  }
+
+  @override
+  int get hashCode {
+    return title.hashCode ^
+        petId.hashCode ^
+        from.hashCode ^
+        to.hashCode ^
+        background.hashCode ^
+        isAllDay.hashCode ^
+        recurrenceRule.hashCode ^
+        description.hashCode;
+  }
+
+  PetAppointment copyWith({
+    String? title,
+    String? petId,
+    DateTime? from,
+    DateTime? to,
+    Color? background,
+    bool? isAllDay,
+    String? recurrenceRule,
+    String? description,
+  }) {
+    return PetAppointment(
+      title: title ?? this.title,
+      petId: petId ?? this.petId,
+      from: from ?? this.from,
+      to: to ?? this.to,
+      background: background ?? this.background,
+      isAllDay: isAllDay ?? this.isAllDay,
+      recurrenceRule: recurrenceRule ?? this.recurrenceRule,
+      description: description ?? this.description,
+    );
+  }
 }

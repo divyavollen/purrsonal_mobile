@@ -21,8 +21,6 @@ class CustomHeader extends StatelessWidget {
       icon = Icons.calendar_view_week;
     } else if (controller.view == CalendarView.day) {
       icon = Icons.calendar_today;
-    } else if (controller.view == CalendarView.schedule) {
-      icon = Icons.schedule;
     }
 
     return Container(
@@ -89,21 +87,6 @@ class CustomHeader extends StatelessWidget {
                         ? Theme.of(context).colorScheme.tertiaryFixed
                         : Theme.of(context).colorScheme.onSurface,
                     fontWeight: controller.view == CalendarView.day
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                  ),
-                ),
-              ),
-
-              PopupMenuItem(
-                value: CalendarView.schedule,
-                child: Text(
-                  'Schedule',
-                  style: TextStyle(
-                    color: controller.view == CalendarView.schedule
-                        ? Theme.of(context).colorScheme.tertiaryFixed
-                        : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: controller.view == CalendarView.schedule
                         ? FontWeight.bold
                         : FontWeight.normal,
                   ),

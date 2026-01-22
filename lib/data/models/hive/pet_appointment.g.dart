@@ -17,34 +17,37 @@ class PetAppointmentAdapter extends TypeAdapter<PetAppointment> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PetAppointment(
-      eventName: fields[0] as String,
-      from: fields[1] as DateTime?,
-      to: fields[2] as DateTime?,
-      background: fields[3] as Color?,
-      isAllDay: fields[4] as bool,
-      description: fields[5] as String?,
-      recurrenceRule: fields[6] as String,
+      title: fields[0] as String?,
+      petId: fields[1] as String,
+      from: fields[2] as DateTime?,
+      to: fields[3] as DateTime?,
+      background: fields[4] as Color?,
+      isAllDay: fields[5] as bool?,
+      recurrenceRule: fields[6] as String?,
+      description: fields[7] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, PetAppointment obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
-      ..write(obj.eventName)
+      ..write(obj.title)
       ..writeByte(1)
-      ..write(obj.from)
+      ..write(obj.petId)
       ..writeByte(2)
-      ..write(obj.to)
+      ..write(obj.from)
       ..writeByte(3)
-      ..write(obj.background)
+      ..write(obj.to)
       ..writeByte(4)
-      ..write(obj.isAllDay)
+      ..write(obj.background)
       ..writeByte(5)
-      ..write(obj.description)
+      ..write(obj.isAllDay)
       ..writeByte(6)
-      ..write(obj.recurrenceRule);
+      ..write(obj.recurrenceRule)
+      ..writeByte(7)
+      ..write(obj.description);
   }
 
   @override

@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:workspace/core/utils/image_util.dart';
 import 'package:workspace/data/models/hive/pet.dart';
 import 'package:workspace/features/pets/providers/pet_provider.dart';
-import 'package:workspace/features/pets/validators/pet_validator.dart';
+import 'package:workspace/features/pets/validators/input_validator.dart';
 import 'package:workspace/features/pets/widgets/form/add_pet_input_builder.dart';
 import 'package:workspace/features/pets/widgets/form/gender_button.dart';
 import 'package:workspace/features/pets/widgets/form/img_field.dart';
@@ -202,27 +202,29 @@ class _PetFormState extends State<PetForm> {
                   ),
                   const SizedBox(height: 15),
 
-                  AddPetInputBuilder.buildTextField(
+                  InputBuilder.buildTextField(
                     context,
                     label: 'Name',
                     initialValue: _currentPet.name,
                     onSaved: (val) => _currentPet.name = val ?? '',
-                    validator: PetValidator.validateName,
+                    validator: (val) =>
+                        InputValidator.validateRequiredInput(val, 'name'),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                   const SizedBox(height: 15),
 
-                  AddPetInputBuilder.buildDropDownField(
+                  InputBuilder.buildDropDownField(
                     context,
                     label: 'Species',
                     maxLength: 10,
                     initialValue: _currentPet.species,
                     onSaved: (val) => _currentPet.species = val ?? '',
                     validator: (v) =>
-                        PetValidator.validateRequired(v, 'Species'),
+                        InputValidator.validateRequired(v, 'Species'),
                   ),
                   const SizedBox(height: 15),
 
-                  AddPetInputBuilder.buildTextField(
+                  InputBuilder.buildTextField(
                     context,
                     label: 'Breed',
                     initialValue: _currentPet.breed,
@@ -230,6 +232,7 @@ class _PetFormState extends State<PetForm> {
                     formatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
                     ],
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                   const SizedBox(height: 15),
 

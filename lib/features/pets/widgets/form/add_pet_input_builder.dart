@@ -2,14 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workspace/core/constants/pet_species_enum.dart';
 
-class AddPetInputBuilder extends StatelessWidget {
-  const AddPetInputBuilder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-
+class InputBuilder {
   static Widget buildTextField(
     BuildContext context, {
     required String label,
@@ -17,27 +10,38 @@ class AddPetInputBuilder extends StatelessWidget {
     String? Function(String?)? validator,
     List<TextInputFormatter>? formatters,
     void Function(String?)? onSaved,
+    void Function(String)? onChanged,
+    int? maxLines = 1,
+    int? minLines = 1,
     int maxLength = 30,
+    TextInputType keyboardType = TextInputType.text,
+    InputBorder? border,
+    double? fontSize,
+    FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
   }) {
     return TextFormField(
       initialValue: initialValue,
       onSaved: onSaved,
+      onChanged: onChanged,
+      minLines: minLines,
+      maxLines: maxLines,
+      maxLength: maxLength,
+      keyboardType: keyboardType,
+      validator: validator,
+      inputFormatters: formatters,
+      textCapitalization: TextCapitalization.sentences,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
+        fontSize: fontSize,
+      ),
       decoration: InputDecoration(
         labelText: label,
         counterText: '',
+        border: border,
+        floatingLabelBehavior: floatingLabelBehavior,
       ),
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: validator,
-      inputFormatters: formatters,
-      maxLength: maxLength,
-      textCapitalization: TextCapitalization.sentences,
-      keyboardType: TextInputType.text,
-      onTapOutside: (PointerDownEvent event) {
-        FocusManager.instance.primaryFocus?.unfocus();
-      },
+      onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
     );
   }
 

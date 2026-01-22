@@ -13,6 +13,7 @@ import 'package:workspace/data/database/settings_database.dart';
 import 'package:workspace/data/models/hive/pet.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
 import 'package:workspace/data/models/hive/settings.dart';
+import 'package:workspace/features/pets/providers/appointment_provider.dart';
 import 'package:workspace/features/pets/providers/calendar_selection_provider.dart';
 import 'package:workspace/features/pets/providers/pet_provider.dart';
 
@@ -56,6 +57,10 @@ void main() async {
             ),
 
             ChangeNotifierProvider(
+              create: (_) => PetAppointmentProvider(),
+            ),
+
+            ChangeNotifierProvider(
               create: (_) => CalendarSelectionProvider(),
             ),
           ],
@@ -76,6 +81,7 @@ Future<void> _initHive() async {
   Hive.registerAdapter(PetAppointmentAdapter());
 
   await Hive.openBox<Pet>('pets');
+  await Hive.openBox<PetAppointment>('appointments');
   final settingsBox = await Hive.openBox<Settings>('settings');
   settingsDatabase = SettingsDatabase(settingsBox);
 }

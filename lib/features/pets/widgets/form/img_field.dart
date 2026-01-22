@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:workspace/core/constants/app_dimensions.dart';
 
 class ImageField extends StatelessWidget {
   final File? image;
@@ -29,15 +30,17 @@ class ImageField extends StatelessWidget {
 
           child: CircleAvatar(
             radius: 90,
-            backgroundImage: image != null ? FileImage(image!) : null,
             backgroundColor: Colors.transparent,
-            child: image == null
-                ? Icon(
-                    Icons.camera_alt,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    size: 40,
+            child: image != null
+                ? ClipOval(
+                    child: Image.file(
+                      image!,
+                      width: petFormImgSize,
+                      height: petFormImgSize,
+                      fit: BoxFit.cover,
+                    ),
                   )
-                : null,
+                : Icon(Icons.camera_alt, size: 40),
           ),
         ),
       ),

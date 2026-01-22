@@ -1,34 +1,34 @@
-import 'dart:ui';
-
+import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
 
-class EventDatasource extends CalendarDataSource {
-  EventDatasource(List<PetAppointment> source) {
+class AppointmentDatasource extends CalendarDataSource {
+  AppointmentDatasource(List<PetAppointment> source) {
     appointments = source;
   }
 
   @override
-  bool isAllDay(int index) => appointments![index].isAllDay;
+  DateTime getStartTime(int index) =>
+      appointments![index].from ?? DateTime.now();
 
   @override
-  String getSubject(int index) => appointments![index].eventName;
+  DateTime getEndTime(int index) =>
+      appointments![index].to ?? DateTime.now().add(Duration(hours: 1));
 
   @override
-  String getStartTimeZone(int index) => appointments![index].startTimeZone;
+  String getSubject(int index) => appointments![index].title ?? '';
 
   @override
-  String getNotes(int index) => appointments![index].description;
+  Color getColor(int index) => appointments![index].background ?? Colors.white;
 
   @override
-  String getEndTimeZone(int index) => appointments![index].endTimeZone;
+  bool isAllDay(int index) => appointments![index].isAllDay ?? false;
 
   @override
-  Color getColor(int index) => appointments![index].background;
+  String? getNotes(int index) => appointments![index].description;
 
   @override
-  DateTime getStartTime(int index) => appointments![index].from;
+  String? getRecurrenceRule(int index) => appointments![index].recurrenceRule;
 
-  @override
-  DateTime getEndTime(int index) => appointments![index].to;
+  String getPetId(int index) => appointments![index].petId;
 }
