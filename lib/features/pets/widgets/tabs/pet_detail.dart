@@ -30,6 +30,7 @@ class PetDetails extends StatelessWidget {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         titleSpacing: -5,
         title: Text(pet.name),
@@ -53,25 +54,23 @@ class PetDetails extends StatelessWidget {
             label: 'Calendar',
             icon: Icon(Icons.calendar_month),
           ),
-          NavigationDestination(label: 'Settings', icon: Icon(Icons.settings)),
         ],
         onDestinationSelected: (value) => navigationShell.goBranch(value),
       ),
 
       floatingActionButton: navigationShell.currentIndex == 1
           ? FloatingActionButton(
-              onPressed: () {
+              onPressed: () async {
                 final selectedDate = context
                     .read<CalendarSelectionProvider>()
                     .selectedDate;
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AppointmentEditor(
-                      selectedDate: selectedDate,
-                      petId: petId,
-                    ),
+                await showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => AppointmentEditor(
+                    selectedDate: selectedDate,
+                    petId: petId,
                   ),
                 );
               },

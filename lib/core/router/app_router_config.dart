@@ -5,12 +5,12 @@ import 'package:workspace/features/pets/widgets/tabs/pet_calendar_tab.dart';
 import 'package:workspace/features/pets/widgets/tabs/pet_detail.dart';
 import 'package:workspace/features/pets/widgets/tabs/pet_info_tab.dart';
 
-class AppRouterConfig {
-  final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final rootNavigatorKey = GlobalKey<NavigatorState>();
 
+class AppRouterConfig {
   GoRouter get router => GoRouter(
     initialLocation: '/',
-    navigatorKey: _rootNavigatorKey,
+    navigatorKey: rootNavigatorKey,
     routes: [
       GoRoute(
         name: 'home',
@@ -52,15 +52,6 @@ class AppRouterConfig {
                     name: 'pet-cal',
                     path: 'calendar',
                     builder: (context, state) => PetCalendarTab(),
-                  ),
-                ],
-              ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    name: 'pet-a',
-                    path: 'settings',
-                    builder: (context, state) => const Text('Whatever'),
                   ),
                 ],
               ),

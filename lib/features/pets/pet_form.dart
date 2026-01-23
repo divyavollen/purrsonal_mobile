@@ -37,7 +37,8 @@ class PetForm extends StatefulWidget {
 }
 
 class _PetFormState extends State<PetForm> {
-  final _formKey = GlobalKey<FormState>();
+  static final _petformKey = GlobalKey<FormState>(debugLabel: 'petForm');
+
   bool _isEditMode = false;
 
   File? _displayImage;
@@ -68,8 +69,8 @@ class _PetFormState extends State<PetForm> {
   }
 
   void _submit() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState!.save();
+    if (_petformKey.currentState?.validate() ?? false) {
+      _petformKey.currentState!.save();
 
       final provider = context.read<PetProvider>();
 
@@ -132,7 +133,7 @@ class _PetFormState extends State<PetForm> {
   Widget build(BuildContext context) {
     return Dialog.fullscreen(
       child: Form(
-        key: _formKey,
+        key: _petformKey,
 
         child: Scaffold(
           resizeToAvoidBottomInset: false,

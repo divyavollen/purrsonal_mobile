@@ -16,10 +16,10 @@ class AppLogger {
       level: Level.debug,
 
       printer: PrettyPrinter(
-        methodCount: 2,
-        errorMethodCount: 8,
+        methodCount: 1,
+        errorMethodCount: 15,
         lineLength: 120,
-        colors: false,
+        colors: true,
         printEmojis: false,
         dateTimeFormat: DateTimeFormat.dateAndTime,
       ),

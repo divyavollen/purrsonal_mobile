@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
-import 'package:workspace/core/constants/app_dimensions.dart';
 import 'package:workspace/core/constants/repeat_freq_enum.dart';
 import 'package:workspace/core/utils/app_logger.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
 import 'package:workspace/features/pets/providers/appointment_provider.dart';
-import 'package:workspace/features/pets/validators/input_validator.dart';
+import 'package:workspace/features/pets/widgets/calendar/appointment_allday_field.dart';
+import 'package:workspace/features/pets/widgets/calendar/appointment_desc_field.dart';
+import 'package:workspace/features/pets/widgets/calendar/appointment_title_section.dart';
 import 'package:workspace/features/pets/widgets/calendar/date_time_picker.dart';
-import 'package:workspace/features/pets/widgets/form/add_pet_input_builder.dart';
+import 'package:workspace/features/pets/widgets/calendar/repeat_rule_picket.dart';
 
 part 'appointment_editor_helper.dart';
 
@@ -47,7 +47,7 @@ class _AppointmentEditorState extends State<AppointmentEditor>
   bool _isEditMode = false;
   int? selectedRepeat = -1;
   Color pickedColor = Color(0xff443a49);
-  final _formKey = GlobalKey<FormState>();
+  static final _apptFormKey = GlobalKey<FormState>(debugLabel: 'apptForm');
 
   @override
   void initState() {
@@ -57,6 +57,7 @@ class _AppointmentEditorState extends State<AppointmentEditor>
       _isEditMode = true;
       _currentEvent = widget.event!.copyWith();
       appLogger.i('_currentEvent ${_currentEvent.toString()}');
+      _getRecurrenceRule();
     } else {
       _currentEvent = PetAppointment.empty(petId: widget.petId);
       _initDateTime();
@@ -89,14 +90,17 @@ class _AppointmentEditorState extends State<AppointmentEditor>
   }
 
   void _submit() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState!.save();
+    appLogger.i('In submit');
+    if (_apptFormKey.currentState?.validate() ?? false) {
+      _apptFormKey.currentState!.save();
 
       final provider = context.read<PetAppointmentProvider>();
 
       if (_isEditMode) {
+        appLogger.i('Save appt');
         provider.updateEvent(widget.event!, _currentEvent);
       } else {
+        appLogger.i('Add new appt');
         provider.addEvent(_currentEvent);
       }
 
@@ -106,190 +110,132 @@ class _AppointmentEditorState extends State<AppointmentEditor>
     }
   }
 
+  void _getRecurrenceRule() {
+    final rule = _currentEvent.recurrenceRule;
+
+    if (rule == null || rule.isEmpty || !rule.contains('=')) {
+      setState(() => selectedRepeat = -1);
+      return;
+    }
+
+    final parts = rule.split('=');
+    if (parts.length > 1) {
+      final freqString = parts[1].split(';')[0].toUpperCase();
+
+      final index = Frequency.values.indexWhere(
+        (f) => f.name.toUpperCase() == freqString,
+      );
+
+      setState(() => selectedRepeat = index);
+    } else {
+      setState(() => selectedRepeat = -1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double bottomPadding = MediaQuery.of(context).padding.bottom > 0
         ? 0
         : 10.0;
 
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            _isEditMode ? 'Edit Appointment' : 'New Appointment',
-          ),
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+
+      appBar: AppBar(
+        title: Text(
+          _isEditMode ? 'Edit Appointment' : 'New Appointment',
         ),
-        body: ListView(
-          padding: const EdgeInsets.all(0),
-          children: <Widget>[
-            ListTile(
-              leading: GestureDetector(
+      ),
+      body: Form(
+        key: _apptFormKey,
+
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppointmentTitleSection(
+                currentEvent: _currentEvent,
                 onTap: () => _showColourPicker(pickedColor),
-                child: Icon(
-                  Icons.color_lens,
-                  color: _currentEvent.background,
-                  size: 24,
+              ),
+
+              const Divider(
+                height: 1.0,
+                thickness: 1,
+              ),
+
+              AppointmentAllDayField(
+                currentEvent: _currentEvent,
+                onChanged: (bool value) {
+                  setState(() {
+                    _currentEvent.isAllDay = value;
+                  });
+                },
+              ),
+
+              ApptDateTimePicker(
+                date: _currentEvent.from!,
+                isAllDay: _currentEvent.isAllDay!,
+                onDateTap: () => _pickDate(true),
+                onTimeTap: () => _pickTime(true),
+              ),
+
+              ApptDateTimePicker(
+                date: _currentEvent.to!,
+                isAllDay: _currentEvent.isAllDay!,
+                onDateTap: () => _pickDate(false),
+                onTimeTap: () => _pickTime(false),
+              ),
+
+              const Divider(
+                height: 1.0,
+                thickness: 1,
+              ),
+
+              RepeatRulePicker(
+                selectedRepeat: selectedRepeat,
+
+                onSelected: (newIndex) {
+                  if (newIndex == null || newIndex == -1) {
+                    setState(() {
+                      selectedRepeat = -1;
+                      _currentEvent.recurrenceRule = '';
+                    });
+                    return;
+                  }
+
+                  String freq = Frequency.values[newIndex].name.toUpperCase();
+
+                  setState(() {
+                    selectedRepeat = newIndex;
+                    _currentEvent.recurrenceRule = 'FREQ=$freq';
+                  });
+                },
+              ),
+
+              const Divider(
+                height: 1.0,
+                thickness: 1,
+              ),
+
+              DynamicDescField(
+                pickedColor: pickedColor,
+                currentEvent: _currentEvent,
+              ),
+
+              const SizedBox(height: 30),
+
+              Padding(
+                padding: EdgeInsets.only(bottom: bottomPadding),
+                child: ElevatedButton(
+                  onPressed: _submit,
+                  child: Text(_isEditMode ? 'Save' : 'Add Appointment'),
                 ),
               ),
-              contentPadding: const EdgeInsets.fromLTRB(5, 0, 5, 5),
-              title: InputBuilder.buildTextField(
-                initialValue: _currentEvent.title,
-                context,
-                label: 'Add title',
-                onChanged: (String value) {
-                  _currentEvent.title = value;
-                },
-                onSaved: (val) => _currentEvent.title = val ?? '',
-                maxLines: null,
-                fontSize: headLineSmallFontSize,
-                border: InputBorder.none,
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                validator: (val) =>
-                    InputValidator.validateRequiredInput(val, 'title'),
-                formatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
-                ],
-              ),
-            ),
-
-            const Divider(
-              height: 1.0,
-              thickness: 1,
-            ),
-
-            ListTile(
-              contentPadding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-              leading: Icon(
-                Icons.access_time,
-                color: Colors.black54,
-              ),
-              title: Row(
-                children: <Widget>[
-                  const Expanded(
-                    child: Text('All-day'),
-                  ),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Switch(
-                        value: _currentEvent.isAllDay!,
-                        onChanged: (bool value) {
-                          setState(() {
-                            _currentEvent.isAllDay = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            ApptDateTimePicker(
-              date: _currentEvent.from!,
-              isAllDay: _currentEvent.isAllDay!,
-              onDateTap: () => _pickDate(true),
-              onTimeTap: () => _pickTime(true),
-            ),
-
-            ApptDateTimePicker(
-              date: _currentEvent.to!,
-              isAllDay: _currentEvent.isAllDay!,
-              onDateTap: () => _pickDate(false),
-              onTimeTap: () => _pickTime(false),
-            ),
-
-            const Divider(
-              height: 1.0,
-              thickness: 1,
-            ),
-
-            ListTile(
-              leading: Icon(
-                Icons.repeat,
-              ),
-              contentPadding: const EdgeInsets.fromLTRB(5, 2, 5, 0),
-              title: Text('Repeat'),
-            ),
-
-            //TODO make this functional
-            ListTile(
-              contentPadding: const EdgeInsets.fromLTRB(5, 0, 5, 2),
-              leading: const SizedBox(width: 24),
-              title: Align(
-                alignment: AlignmentGeometry.centerLeft,
-                child: Wrap(
-                  spacing: 5.0,
-                  children: List<Widget>.generate(Frequency.values.length, (
-                    int index,
-                  ) {
-                    return ChoiceChip(
-                      showCheckmark: true,
-                      label: Text(
-                        Frequency.values[index].name,
-                      ),
-                      labelStyle: TextStyle(
-                        fontWeight: selectedRepeat == index
-                            ? FontWeight.w900
-                            : FontWeight.normal,
-                      ),
-                      selected: selectedRepeat == index,
-                      onSelected: (bool selected) {
-                        setState(() {
-                          selectedRepeat = selected ? index : null;
-                          _currentEvent.recurrenceRule =
-                              'FREQ=${Frequency.values[index].name}';
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-
-            const Divider(
-              height: 1.0,
-              thickness: 1,
-            ),
-
-            ListTile(
-              contentPadding: const EdgeInsets.all(5),
-              leading: Icon(
-                Icons.subject,
-                color: pickedColor,
-              ),
-              title: InputBuilder.buildTextField(
-                context,
-                initialValue: _currentEvent.description,
-                label: 'Description',
-                onChanged: (String value) {
-                  _currentEvent.description = value;
-                },
-                onSaved: (val) => _currentEvent.description = val ?? '',
-                keyboardType: TextInputType.multiline,
-                minLines: 4,
-                maxLines: null,
-                fontSize: headLineSmallFontSize,
-                border: InputBorder.none,
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                validator: (val) => InputValidator.validateInput(val),
-                formatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            Padding(
-              padding: EdgeInsets.only(bottom: bottomPadding),
-              child: ElevatedButton(
-                onPressed: _submit,
-                child: Text(_isEditMode ? 'Save' : 'Add Appointment'),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

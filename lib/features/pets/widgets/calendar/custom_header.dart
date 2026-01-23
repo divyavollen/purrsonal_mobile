@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:workspace/core/constants/app_dimensions.dart';
 
 class CustomHeader extends StatelessWidget {
   final String headerText;
@@ -24,6 +25,7 @@ class CustomHeader extends StatelessWidget {
     }
 
     return Container(
+      height: calendarHeaderHeight,
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       color: Theme.of(context).colorScheme.primary,

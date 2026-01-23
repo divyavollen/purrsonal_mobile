@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:workspace/core/constants/app_dimensions.dart';
-import 'package:workspace/core/utils/app_logger.dart';
 import 'package:workspace/data/models/hive/pet.dart';
 import 'package:workspace/features/pets/providers/pet_provider.dart';
 import 'package:workspace/features/pets/widgets/form/pet_img_container.dart';
@@ -139,8 +138,6 @@ class PetTile extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
 
       onTap: () {
-        appLogger.i("Pet selected ${pet.toString()} with key: ${pet.key}");
-
         context.pushNamed(
           'pet-info',
           pathParameters: {'petId': pet.key.toString()},

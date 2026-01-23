@@ -8,6 +8,14 @@ class AppointmentDatasource extends CalendarDataSource {
   }
 
   @override
+  Object? convertAppointmentToObject(
+    Object? customData,
+    Appointment appointment,
+  ) {
+    return customData;
+  }
+
+  @override
   DateTime getStartTime(int index) =>
       appointments![index].from ?? DateTime.now();
 

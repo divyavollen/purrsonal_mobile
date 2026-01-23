@@ -4,19 +4,19 @@ extension FrequencyExt on Frequency {
   String get name {
     switch (this) {
       case Frequency.daily:
-        return 'Daily';
+        return 'DAILY';
 
       case Frequency.weekly:
-        return 'Weekly';
+        return 'WEEKLY';
 
       case Frequency.monthly:
-        return 'Monthly';
+        return 'MONTHLY';
 
       case Frequency.yearly:
-        return 'Yearly';
+        return 'YEARLY';
 
       case Frequency.custom:
-        return 'Custom..';
+        return 'CUSTOM..';
     }
   }
 }

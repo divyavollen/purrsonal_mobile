@@ -13,11 +13,12 @@ class InputBuilder {
     void Function(String)? onChanged,
     int? maxLines = 1,
     int? minLines = 1,
-    int maxLength = 30,
+    int? maxLength,
     TextInputType keyboardType = TextInputType.text,
     InputBorder? border,
     double? fontSize,
     FloatingLabelBehavior floatingLabelBehavior = FloatingLabelBehavior.auto,
+    FocusNode? node,
   }) {
     return TextFormField(
       initialValue: initialValue,
@@ -42,6 +43,7 @@ class InputBuilder {
         floatingLabelBehavior: floatingLabelBehavior,
       ),
       onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+      focusNode: node,
     );
   }
 

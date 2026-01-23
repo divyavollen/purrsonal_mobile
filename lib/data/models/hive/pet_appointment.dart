@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 
 part 'pet_appointment.g.dart';
@@ -43,14 +43,14 @@ class PetAppointment extends HiveObject {
   });
 
   PetAppointment.empty({
-    this.title,
+    this.title = '',
     required this.petId,
     this.from,
     this.to,
-    this.background,
+    this.background = const Color.fromARGB(255, 240, 177, 177),
     this.isAllDay = false,
-    this.recurrenceRule,
-    this.description,
+    this.recurrenceRule = '',
+    this.description = '',
   });
 
   @override
@@ -64,7 +64,7 @@ class PetAppointment extends HiveObject {
       'petId': petId,
       'from': from?.millisecondsSinceEpoch,
       'to': to?.millisecondsSinceEpoch,
-      'background': background?.value,
+      'background': background?.toARGB32(),
       'isAllDay': isAllDay,
       'recurrenceRule': recurrenceRule,
       'description': description,

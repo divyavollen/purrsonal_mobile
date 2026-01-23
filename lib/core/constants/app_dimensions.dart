@@ -29,3 +29,6 @@ final double subTextFontSize = 16;
 final double buttonTextFontSize = 14;
 final double smallFontSize = 13;
 final double xsmallFontSize = 11;
+
+final double calendarHeaderHeight = 60;
+final double agendaViewHeight = 240;

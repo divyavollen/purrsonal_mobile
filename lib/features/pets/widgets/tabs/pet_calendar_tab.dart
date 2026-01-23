@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:workspace/core/constants/app_dimensions.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
-import 'package:workspace/features/pets/datasource/event_datasource.dart';
+import 'package:workspace/features/pets/datasource/appointment_datasource.dart';
 import 'package:workspace/features/pets/providers/appointment_provider.dart';
 import 'package:workspace/features/pets/providers/calendar_selection_provider.dart';
 import 'package:workspace/features/pets/widgets/calendar/appointment_editor.dart';
@@ -27,6 +28,12 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
   }
 
   @override
+  void dispose() {
+    _calendarController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<PetAppointmentProvider>(
       builder: (context, provider, child) {
@@ -41,77 +48,97 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
             ),
 
             Expanded(
-              child: SfCalendar(
-                controller: _calendarController,
-                view: CalendarView.month,
+              child: LayoutBuilder(
+                builder: (context, constraints) => ExcludeSemantics(
+                  child: SfCalendar(
+                    controller: _calendarController,
+                    view: CalendarView.month,
 
-                headerHeight: 0,
+                    headerHeight: 0,
 
-                onViewChanged: (ViewChangedDetails details) =>
-                    onViewChanged(details),
+                    onViewChanged: (ViewChangedDetails details) =>
+                        onViewChanged(details),
 
-                onSelectionChanged:
-                    (CalendarSelectionDetails calendarSelectionDetails) {
-                      if (calendarSelectionDetails.date != null) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          context.read<CalendarSelectionProvider>().updateDate(
-                            calendarSelectionDetails.date!,
-                          );
-                        });
+                    onSelectionChanged:
+                        (
+                          CalendarSelectionDetails calendarSelectionDetails,
+                        ) {
+                          if (calendarSelectionDetails.date != null) {
+                            WidgetsBinding.instance.addPostFrameCallback((
+                              _,
+                            ) {
+                              context
+                                  .read<CalendarSelectionProvider>()
+                                  .updateDate(
+                                    calendarSelectionDetails.date!,
+                                  );
+                            });
+                          }
+                        },
+
+                    showCurrentTimeIndicator: true,
+                    firstDayOfWeek: 1,
+                    initialSelectedDate: DateTime.now(),
+                    minDate: DateTime(1995, 01, 01),
+
+                    viewHeaderHeight: 60,
+                    viewHeaderStyle: ViewHeaderStyle(
+                      dayTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    allowedViews: const [
+                      CalendarView.day,
+                      CalendarView.week,
+                      CalendarView.month,
+                    ],
+                    monthViewSettings: MonthViewSettings(
+                      appointmentDisplayMode:
+                          MonthAppointmentDisplayMode.appointment,
+                      showAgenda: true,
+                      agendaViewHeight: agendaViewHeight,
+                    ),
+                    scheduleViewSettings: const ScheduleViewSettings(
+                      appointmentItemHeight: 60,
+                      monthHeaderSettings: MonthHeaderSettings(
+                        height: 50,
+                      ),
+                    ),
+
+                    dataSource: dataSource,
+                    key: const ValueKey('calendar_key'),
+
+                    onTap: (CalendarTapDetails details) async {
+                      FocusScope.of(context).unfocus();
+
+                      if (details.targetElement ==
+                          CalendarElement.calendarCell) {
+                        _calendarController.view = CalendarView.day;
+                      } else if (details.targetElement ==
+                          CalendarElement.appointment) {
+                        if (details.appointments == null ||
+                            details.appointments!.isEmpty) {
+                          return;
+                        }
+                        final PetAppointment appointment =
+                            details.appointments![0] as PetAppointment;
+
+                        await Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            fullscreenDialog: true,
+                            builder: (context) => AppointmentEditor.edit(
+                              event: appointment,
+                              petId: appointment.petId,
+                              selectedDate: appointment.from!,
+                              onDelete: (context) {},
+                            ),
+                          ),
+                        );
                       }
                     },
-
-                showCurrentTimeIndicator: true,
-                firstDayOfWeek: 1,
-                initialSelectedDate: DateTime.now(),
-                minDate: DateTime(1995, 01, 01),
-
-                viewHeaderHeight: 60,
-                viewHeaderStyle: ViewHeaderStyle(
-                  dayTextStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
-
-                allowedViews: const [
-                  CalendarView.day,
-                  CalendarView.week,
-                  CalendarView.month,
-                ],
-                monthViewSettings: const MonthViewSettings(
-                  appointmentDisplayMode:
-                      MonthAppointmentDisplayMode.appointment,
-                  showAgenda: true,
-                ),
-                scheduleViewSettings: const ScheduleViewSettings(
-                  appointmentItemHeight: 60,
-                  monthHeaderSettings: MonthHeaderSettings(
-                    height: 50,
-                  ),
-                ),
-
-                dataSource: dataSource,
-                key: ValueKey(provider.count),
-
-                onTap: (CalendarTapDetails details) {
-                  if (details.targetElement == CalendarElement.calendarCell) {
-                    _calendarController.view = CalendarView.day;
-                  } else if (details.targetElement ==
-                      CalendarElement.appointment) {
-                    final PetAppointment appointment = details.appointments![0];
-
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => AppointmentEditor.edit(
-                          event: appointment,
-                          petId: appointment.petId,
-                          selectedDate: appointment.from!,
-                          onDelete: (context) {},
-                        ),
-                      ),
-                    );
-                  }
-                },
               ),
             ),
           ],
