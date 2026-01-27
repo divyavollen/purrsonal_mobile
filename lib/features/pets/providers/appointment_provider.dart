@@ -18,8 +18,10 @@ class PetAppointmentProvider extends ChangeNotifier {
     super.dispose();
   }
 
-  void addEvent(PetAppointment event) {
-    _evtBox.add(event);
+  void addEvent(PetAppointment newAppt) async {
+    int key = await _evtBox.add(newAppt);
+    newAppt.id = key;
+    await newAppt.save();
   }
 
   void updateEvent(PetAppointment originalEvent, PetAppointment updatedEvent) {
@@ -33,5 +35,16 @@ class PetAppointmentProvider extends ChangeNotifier {
   PetAppointment? getEventByKey(dynamic key) {
     final actualKey = key is String ? int.tryParse(key) : key;
     return _evtBox.get(actualKey);
+  }
+
+  void deleteEventsForPetId(String id) async {
+    final keysToDelete = _evtBox.values
+        .where((event) => event.petId == id)
+        .map((event) => event.key)
+        .toList();
+
+    if (keysToDelete.isNotEmpty) {
+      await _evtBox.deleteAll(keysToDelete);
+    }
   }
 }

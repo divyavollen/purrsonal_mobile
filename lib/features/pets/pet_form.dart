@@ -9,20 +9,20 @@ import 'package:workspace/core/utils/image_util.dart';
 import 'package:workspace/data/models/hive/pet.dart';
 import 'package:workspace/features/pets/providers/pet_provider.dart';
 import 'package:workspace/features/pets/validators/input_validator.dart';
-import 'package:workspace/features/pets/widgets/form/add_pet_input_builder.dart';
-import 'package:workspace/features/pets/widgets/form/gender_button.dart';
-import 'package:workspace/features/pets/widgets/form/img_field.dart';
-import 'package:workspace/features/pets/widgets/form/img_src_provider.dart';
-import 'package:workspace/features/pets/widgets/form/pet_birthday_field.dart';
+import 'package:workspace/features/pets/widgets/pet_form_fields/add_pet_input_builder.dart';
+import 'package:workspace/features/pets/widgets/pet_form_fields/gender_button.dart';
+import 'package:workspace/features/pets/widgets/pet_form_fields/img_field.dart';
+import 'package:workspace/features/pets/widgets/pet_form_fields/img_src_provider.dart';
+import 'package:workspace/features/pets/widgets/pet_form_fields/pet_birthday_field.dart';
 
 class PetForm extends StatefulWidget {
-  final String mode;
+  final bool isEdit;
   final Pet? pet;
   final void Function(BuildContext)? onDelete;
 
   const PetForm({
     super.key,
-  }) : mode = 'add',
+  }) : isEdit = false,
        pet = null,
        onDelete = null;
 
@@ -30,7 +30,7 @@ class PetForm extends StatefulWidget {
     super.key,
     required this.pet,
     required this.onDelete,
-  }) : mode = 'edit';
+  }) : isEdit = true;
 
   @override
   State<PetForm> createState() => _PetFormState();
@@ -39,7 +39,7 @@ class PetForm extends StatefulWidget {
 class _PetFormState extends State<PetForm> {
   static final _petformKey = GlobalKey<FormState>(debugLabel: 'petForm');
 
-  bool _isEditMode = false;
+  late bool _isEditMode;
 
   File? _displayImage;
   late Pet _currentPet;
@@ -47,9 +47,9 @@ class _PetFormState extends State<PetForm> {
   @override
   void initState() {
     super.initState();
+    _isEditMode = widget.isEdit;
 
-    if (widget.mode == 'edit') {
-      _isEditMode = true;
+    if (_isEditMode) {
       _currentPet = widget.pet!.copyWith();
       _getisplayImage();
     } else {

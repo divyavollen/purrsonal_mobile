@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:workspace/core/constants/repeat_freq_enum.dart';
 import 'package:workspace/core/utils/app_logger.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
 import 'package:workspace/features/pets/providers/appointment_provider.dart';
-import 'package:workspace/features/pets/widgets/calendar/appointment_allday_field.dart';
-import 'package:workspace/features/pets/widgets/calendar/appointment_desc_field.dart';
-import 'package:workspace/features/pets/widgets/calendar/appointment_title_section.dart';
-import 'package:workspace/features/pets/widgets/calendar/date_time_picker.dart';
-import 'package:workspace/features/pets/widgets/calendar/repeat_rule_picket.dart';
+import 'package:workspace/features/pets/widgets/appointment_form_fields/allday_field.dart';
+import 'package:workspace/features/pets/widgets/appointment_form_fields/custom_repeat_picker.dart';
+import 'package:workspace/features/pets/widgets/appointment_form_fields/date_time_picker.dart';
+import 'package:workspace/features/pets/widgets/appointment_form_fields/description_field.dart';
+import 'package:workspace/features/pets/widgets/appointment_form_fields/repeat_rule_picket.dart';
+import 'package:workspace/features/pets/widgets/appointment_form_fields/save_options_dialog.dart';
+import 'package:workspace/features/pets/widgets/appointment_form_fields/title_section.dart';
 
-part 'appointment_editor_helper.dart';
+part 'widgets/appointment_form_fields/appointment_editor_helper.dart';
 
 class AppointmentEditor extends StatefulWidget {
   final String mode;
@@ -45,7 +48,7 @@ class _AppointmentEditorState extends State<AppointmentEditor>
     with AppointmentEditorHelper {
   late PetAppointment _currentEvent;
   bool _isEditMode = false;
-  int? selectedRepeat = -1;
+  int selectedRepeat = -1;
   Color pickedColor = Color(0xff443a49);
   static final _apptFormKey = GlobalKey<FormState>(debugLabel: 'apptForm');
 
@@ -90,24 +93,64 @@ class _AppointmentEditorState extends State<AppointmentEditor>
   }
 
   void _submit() async {
-    appLogger.i('In submit');
     if (_apptFormKey.currentState?.validate() ?? false) {
+      final provider = context.read<PetAppointmentProvider>();
       _apptFormKey.currentState!.save();
 
-      final provider = context.read<PetAppointmentProvider>();
-
+      //TODO fix edit save creating new series issue
       if (_isEditMode) {
-        appLogger.i('Save appt');
-        provider.updateEvent(widget.event!, _currentEvent);
+        if (_currentEvent.recurrenceId != null) {
+          provider.updateEvent(widget.event!, _currentEvent);
+        } else if (_currentEvent.recurrenceRule != null &&
+            _currentEvent.recurrenceRule!.isNotEmpty) {
+          final choice = await _showSaveOptionsDialog();
+
+          if (choice == null) return;
+
+          if (choice == 'series') {
+            provider.updateEvent(widget.event!, _currentEvent);
+          } else if (choice == 'occurrence') {
+            final master = widget.event!;
+
+            final List<DateTime> updatedDates = List<DateTime>.from(
+              master.exceptionDates ?? [],
+            );
+
+            updatedDates.add(
+              DateTime(
+                widget.selectedDate.year,
+                widget.selectedDate.month,
+                widget.selectedDate.day,
+                master.from!.hour,
+                master.from!.minute,
+              ),
+            );
+
+            final updatedMaster = master.copyWith(
+              exceptionDates: updatedDates,
+            );
+
+            provider.updateEvent(master, updatedMaster);
+
+            final exception = _currentEvent.copyWith(
+              recurrenceId: master.key,
+              recurrenceRule: null,
+            );
+
+            provider.addEvent(exception);
+          }
+        } else {
+          provider.updateEvent(widget.event!, _currentEvent);
+        }
       } else {
         appLogger.i('Add new appt');
         provider.addEvent(_currentEvent);
       }
-
-      if (!mounted) return;
-
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
+      return;
     }
+
+    appLogger.w('Validation failed');
   }
 
   void _getRecurrenceRule() {
@@ -118,16 +161,23 @@ class _AppointmentEditorState extends State<AppointmentEditor>
       return;
     }
 
-    final parts = rule.split('=');
-    if (parts.length > 1) {
-      final freqString = parts[1].split(';')[0].toUpperCase();
-
-      final index = Frequency.values.indexWhere(
-        (f) => f.name.toUpperCase() == freqString,
+    try {
+      final RecurrenceProperties props = SfCalendar.parseRRule(
+        rule,
+        _currentEvent.from!,
       );
 
-      setState(() => selectedRepeat = index);
-    } else {
+      if (props.interval > 1 ||
+          props.recurrenceRange != RecurrenceRange.noEndDate) {
+        setState(() => selectedRepeat = 4);
+      } else {
+        setState(
+          () => selectedRepeat = RecurrenceType.values.indexOf(
+            props.recurrenceType,
+          ),
+        );
+      }
+    } catch (e) {
       setState(() => selectedRepeat = -1);
     }
   }
@@ -139,9 +189,6 @@ class _AppointmentEditorState extends State<AppointmentEditor>
         : 10.0;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      extendBody: true,
-
       appBar: AppBar(
         title: Text(
           _isEditMode ? 'Edit Appointment' : 'New Appointment',
@@ -197,21 +244,36 @@ class _AppointmentEditorState extends State<AppointmentEditor>
               RepeatRulePicker(
                 selectedRepeat: selectedRepeat,
 
-                onSelected: (newIndex) {
+                onSelected: (newIndex) async {
                   if (newIndex == null || newIndex == -1) {
                     setState(() {
                       selectedRepeat = -1;
-                      _currentEvent.recurrenceRule = '';
+                      _currentEvent.recurrenceRule = null;
                     });
                     return;
                   }
 
-                  String freq = Frequency.values[newIndex].name.toUpperCase();
+                  final selectedFreq = Frequency.values[newIndex];
 
-                  setState(() {
-                    selectedRepeat = newIndex;
-                    _currentEvent.recurrenceRule = 'FREQ=$freq';
-                  });
+                  if (selectedFreq == Frequency.custom) {
+                    await _openCustomRecurrencePicker(newIndex);
+                  } else {
+                    final RecurrenceProperties properties =
+                        RecurrenceProperties(
+                          startDate: _currentEvent.from!,
+                          recurrenceType: RecurrenceType.values[newIndex],
+                          interval: 1,
+                        );
+
+                    setState(() {
+                      selectedRepeat = newIndex;
+                      _currentEvent.recurrenceRule = SfCalendar.generateRRule(
+                        properties,
+                        _currentEvent.from!,
+                        _currentEvent.to!,
+                      );
+                    });
+                  }
                 },
               ),
 
@@ -243,4 +305,21 @@ class _AppointmentEditorState extends State<AppointmentEditor>
 
   @override
   PetAppointment get currentEvent => _currentEvent;
+
+  @override
+  int get selectedRepeatIndex => selectedRepeat;
+
+  @override
+  set currentEvent(PetAppointment value) {
+    setState(() {
+      _currentEvent = value;
+    });
+  }
+
+  @override
+  set selectedRepeatIndex(int value) {
+    setState(() {
+      selectedRepeat = value;
+    });
+  }
 }

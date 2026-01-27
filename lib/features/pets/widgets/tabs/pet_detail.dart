@@ -3,9 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:workspace/data/models/hive/pet.dart';
+import 'package:workspace/features/pets/appointment_editor.dart';
 import 'package:workspace/features/pets/providers/calendar_selection_provider.dart';
 import 'package:workspace/features/pets/providers/pet_provider.dart';
-import 'package:workspace/features/pets/widgets/calendar/appointment_editor.dart';
 
 class PetDetails extends StatelessWidget {
   final String petId;
@@ -40,10 +40,7 @@ class PetDetails extends StatelessWidget {
         ),
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: navigationShell,
-      ),
+      body: navigationShell,
 
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,

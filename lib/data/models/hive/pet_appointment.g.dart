@@ -17,37 +17,46 @@ class PetAppointmentAdapter extends TypeAdapter<PetAppointment> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PetAppointment(
-      title: fields[0] as String?,
+      id: fields[0] as dynamic,
       petId: fields[1] as String,
-      from: fields[2] as DateTime?,
-      to: fields[3] as DateTime?,
-      background: fields[4] as Color?,
-      isAllDay: fields[5] as bool?,
-      recurrenceRule: fields[6] as String?,
-      description: fields[7] as String?,
+      title: fields[2] as String?,
+      from: fields[3] as DateTime?,
+      to: fields[4] as DateTime?,
+      description: fields[5] as String?,
+      background: fields[6] as Color?,
+      isAllDay: fields[7] as bool?,
+      recurrenceRule: fields[8] as String?,
+      recurrenceId: fields[9] as dynamic,
+      exceptionDates: (fields[10] as List?)?.cast<DateTime>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, PetAppointment obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(11)
       ..writeByte(0)
-      ..write(obj.title)
+      ..write(obj.id)
       ..writeByte(1)
       ..write(obj.petId)
       ..writeByte(2)
-      ..write(obj.from)
+      ..write(obj.title)
       ..writeByte(3)
-      ..write(obj.to)
+      ..write(obj.from)
       ..writeByte(4)
-      ..write(obj.background)
+      ..write(obj.to)
       ..writeByte(5)
-      ..write(obj.isAllDay)
+      ..write(obj.description)
       ..writeByte(6)
-      ..write(obj.recurrenceRule)
+      ..write(obj.background)
       ..writeByte(7)
-      ..write(obj.description);
+      ..write(obj.isAllDay)
+      ..writeByte(8)
+      ..write(obj.recurrenceRule)
+      ..writeByte(9)
+      ..write(obj.recurrenceId)
+      ..writeByte(10)
+      ..write(obj.exceptionDates);
   }
 
   @override

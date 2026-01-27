@@ -17,30 +17,33 @@ class PetAdapter extends TypeAdapter<Pet> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Pet(
-      name: fields[0] as String,
-      species: fields[1] as String,
-      breed: fields[2] as String?,
-      gender: fields[3] as String,
-      birthdayMillis: (fields[4] as num?)?.toInt(),
-      imagePath: fields[5] as String?,
+      id: fields[0] as dynamic,
+      name: fields[1] as String,
+      species: fields[2] as String,
+      breed: fields[3] as String?,
+      gender: fields[4] as String,
+      birthdayMillis: (fields[5] as num?)?.toInt(),
+      imagePath: fields[6] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Pet obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.species)
+      ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.breed)
+      ..write(obj.species)
       ..writeByte(3)
-      ..write(obj.gender)
+      ..write(obj.breed)
       ..writeByte(4)
-      ..write(obj.birthdayMillis)
+      ..write(obj.gender)
       ..writeByte(5)
+      ..write(obj.birthdayMillis)
+      ..writeByte(6)
       ..write(obj.imagePath);
   }
 

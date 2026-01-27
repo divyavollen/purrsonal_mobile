@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 
@@ -8,122 +6,65 @@ part 'pet_appointment.g.dart';
 @HiveType(typeId: 2)
 class PetAppointment extends HiveObject {
   @HiveField(0)
-  String? title;
+  dynamic id;
 
   @HiveField(1)
   String petId;
 
   @HiveField(2)
-  DateTime? from;
+  String? title;
 
   @HiveField(3)
-  DateTime? to;
+  DateTime? from;
 
   @HiveField(4)
-  Color? background;
+  DateTime? to;
 
   @HiveField(5)
-  bool? isAllDay;
-
-  @HiveField(6)
-  String? recurrenceRule;
-
-  @HiveField(7)
   String? description;
 
+  @HiveField(6)
+  Color? background;
+
+  @HiveField(7)
+  bool? isAllDay;
+
+  @HiveField(8)
+  String? recurrenceRule;
+
+  @HiveField(9)
+  dynamic recurrenceId;
+
+  @HiveField(10)
+  List<DateTime>? exceptionDates;
+
   PetAppointment({
-    required this.title,
+    required this.id,
     required this.petId,
+    this.title,
     this.from,
     this.to,
+    this.description,
     this.background,
     this.isAllDay,
     this.recurrenceRule,
-    this.description,
+    this.recurrenceId,
+    this.exceptionDates,
   });
 
   PetAppointment.empty({
+    this.id,
     this.title = '',
+    this.isAllDay = false,
     required this.petId,
+    this.background = const Color.fromARGB(255, 240, 177, 177),
     this.from,
     this.to,
-    this.background = const Color.fromARGB(255, 240, 177, 177),
-    this.isAllDay = false,
-    this.recurrenceRule = '',
     this.description = '',
+    this.recurrenceRule = '',
+    this.recurrenceId,
+    this.exceptionDates = const [],
   });
-
-  @override
-  String toString() {
-    return 'PetAppointment(title: $title, petId: $petId, from: $from, to: $to, background: $background, isAllDay: $isAllDay, recurrenceRule: $recurrenceRule, description: $description)';
-  }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'title': title,
-      'petId': petId,
-      'from': from?.millisecondsSinceEpoch,
-      'to': to?.millisecondsSinceEpoch,
-      'background': background?.toARGB32(),
-      'isAllDay': isAllDay,
-      'recurrenceRule': recurrenceRule,
-      'description': description,
-    };
-  }
-
-  factory PetAppointment.fromMap(Map<String, dynamic> map) {
-    return PetAppointment(
-      title: map['title'] as String,
-      petId: map['petId'] as String,
-      from: map['from'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['from'] as int)
-          : null,
-      to: map['to'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['to'] as int)
-          : null,
-      background: map['background'] != null
-          ? Color(map['background'] as int)
-          : null,
-      isAllDay: map['isAllDay'] != null ? map['isAllDay'] as bool : null,
-      recurrenceRule: map['recurrenceRule'] != null
-          ? map['recurrenceRule'] as String
-          : null,
-      description: map['description'] != null
-          ? map['description'] as String
-          : null,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory PetAppointment.fromJson(String source) =>
-      PetAppointment.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  bool operator ==(covariant PetAppointment other) {
-    if (identical(this, other)) return true;
-
-    return other.title == title &&
-        other.petId == petId &&
-        other.from == from &&
-        other.to == to &&
-        other.background == background &&
-        other.isAllDay == isAllDay &&
-        other.recurrenceRule == recurrenceRule &&
-        other.description == description;
-  }
-
-  @override
-  int get hashCode {
-    return title.hashCode ^
-        petId.hashCode ^
-        from.hashCode ^
-        to.hashCode ^
-        background.hashCode ^
-        isAllDay.hashCode ^
-        recurrenceRule.hashCode ^
-        description.hashCode;
-  }
 
   PetAppointment copyWith({
     String? title,
@@ -134,16 +75,27 @@ class PetAppointment extends HiveObject {
     bool? isAllDay,
     String? recurrenceRule,
     String? description,
+    dynamic id,
+    dynamic recurrenceId,
+    List<DateTime>? exceptionDates,
   }) {
     return PetAppointment(
-      title: title ?? this.title,
+      id: id ?? this.id,
       petId: petId ?? this.petId,
+      title: title ?? this.title,
       from: from ?? this.from,
       to: to ?? this.to,
+      description: description ?? this.description,
       background: background ?? this.background,
       isAllDay: isAllDay ?? this.isAllDay,
       recurrenceRule: recurrenceRule ?? this.recurrenceRule,
-      description: description ?? this.description,
+      recurrenceId: recurrenceId ?? this.recurrenceId,
+      exceptionDates: exceptionDates ?? this.exceptionDates,
     );
+  }
+
+  @override
+  String toString() {
+    return 'PetAppointment(id: $id, petId: $petId, title: $title, from: $from, to: $to, description: $description, background: $background, isAllDay: $isAllDay, recurrenceRule: $recurrenceRule, recurrenceId: $recurrenceId, exceptionDates: $exceptionDates)';
   }
 }

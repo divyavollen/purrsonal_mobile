@@ -18,7 +18,7 @@ class PetTileAction extends StatelessWidget {
         SheetItem(
           leading: Icon(Icons.admin_panel_settings),
           title: Text('Manage Pet'),
-          onTap: () {},
+          onTap: () {}, //TODO complete this
           padding: EdgeInsets.only(left: 25.0, top: 10.0, bottom: 10.0),
         ),
         SheetItem(

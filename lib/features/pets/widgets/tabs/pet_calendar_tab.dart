@@ -4,11 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:workspace/core/constants/app_dimensions.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
+import 'package:workspace/features/pets/appointment_editor.dart';
 import 'package:workspace/features/pets/datasource/appointment_datasource.dart';
 import 'package:workspace/features/pets/providers/appointment_provider.dart';
 import 'package:workspace/features/pets/providers/calendar_selection_provider.dart';
-import 'package:workspace/features/pets/widgets/calendar/appointment_editor.dart';
-import 'package:workspace/features/pets/widgets/calendar/custom_header.dart';
+import 'package:workspace/features/pets/widgets/appointment_form_fields/custom_header.dart';
 
 class PetCalendarTab extends StatefulWidget {
   const PetCalendarTab({super.key});
@@ -114,7 +114,7 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
 
                       if (details.targetElement ==
                           CalendarElement.calendarCell) {
-                        _calendarController.view = CalendarView.day;
+                        _calendarController.selectedDate = details.date;
                       } else if (details.targetElement ==
                           CalendarElement.appointment) {
                         if (details.appointments == null ||
@@ -135,6 +135,7 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
                             ),
                           ),
                         );
+                        // }
                       }
                     },
                   ),

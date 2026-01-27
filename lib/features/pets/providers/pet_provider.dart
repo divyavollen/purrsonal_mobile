@@ -18,8 +18,10 @@ class PetProvider extends ChangeNotifier {
     super.dispose();
   }
 
-  void addPet(Pet pet) {
-    _petBox.add(pet);
+  void addPet(Pet pet) async {
+    int key = await _petBox.add(pet);
+    pet.id = key;
+    await pet.save();
   }
 
   void updatePet(Pet originalPet, Pet updatedPet) {

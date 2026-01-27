@@ -3,8 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:workspace/core/constants/app_dimensions.dart';
 import 'package:workspace/data/models/hive/pet.dart';
+import 'package:workspace/features/pets/providers/appointment_provider.dart';
 import 'package:workspace/features/pets/providers/pet_provider.dart';
-import 'package:workspace/features/pets/widgets/form/pet_img_container.dart';
+import 'package:workspace/features/pets/widgets/pet_form_fields/pet_img_container.dart';
 import 'package:workspace/features/pets/widgets/pet_tile_action.dart';
 
 class PetTile extends StatelessWidget {
@@ -157,6 +158,9 @@ class PetTile extends StatelessWidget {
               ).pop(); //close confirmation dialog
               Navigator.of(sheetContext).pop(); //close PetTileAction
               context.read<PetProvider>().deletePet(pet);
+              context.read<PetAppointmentProvider>().deleteEventsForPetId(
+                pet.id!,
+              );
               messenger.showSnackBar(
                 const SnackBar(
                   content: Text('Pet deleted successfully!'),

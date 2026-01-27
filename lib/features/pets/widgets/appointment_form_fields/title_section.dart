@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:workspace/core/constants/app_dimensions.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
 import 'package:workspace/features/pets/validators/input_validator.dart';
-import 'package:workspace/features/pets/widgets/form/add_pet_input_builder.dart';
+import 'package:workspace/features/pets/widgets/pet_form_fields/add_pet_input_builder.dart';
 
 class AppointmentTitleSection extends StatelessWidget {
   final Function()? onTap;
@@ -36,7 +36,7 @@ class AppointmentTitleSection extends StatelessWidget {
         },
         onSaved: (val) => currentEvent.title = val ?? '',
         maxLines: 1,
-        maxLength: 20,
+        maxLength: 40,
         fontSize: headLineSmallFontSize,
         border: InputBorder.none,
         floatingLabelBehavior: FloatingLabelBehavior.always,

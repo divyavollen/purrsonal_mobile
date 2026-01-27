@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:hive_ce/hive_ce.dart';
 
 part 'pet.g.dart';
@@ -7,24 +6,28 @@ part 'pet.g.dart';
 @HiveType(typeId: 0)
 class Pet extends HiveObject {
   @HiveField(0)
-  String name;
+  dynamic id;
 
   @HiveField(1)
-  String species;
+  String name;
 
   @HiveField(2)
-  String? breed;
+  String species;
 
   @HiveField(3)
-  String gender;
+  String? breed;
 
   @HiveField(4)
-  int? birthdayMillis;
+  String gender;
 
   @HiveField(5)
+  int? birthdayMillis;
+
+  @HiveField(6)
   String? imagePath;
 
   Pet({
+    required this.id,
     required this.name,
     required this.species,
     required this.breed,
@@ -34,6 +37,7 @@ class Pet extends HiveObject {
   });
 
   Pet.empty({
+    this.id,
     this.name = '',
     this.species = '',
     this.breed,
@@ -44,59 +48,11 @@ class Pet extends HiveObject {
 
   @override
   String toString() {
-    return 'Pet(name: $name, species: $species, breed: $breed, gender: $gender, birthdayMillis: $birthdayMillis, imagePath: $imagePath)';
-  }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'name': name,
-      'species': species,
-      'breed': breed,
-      'gender': gender,
-      'birthdayMillis': birthdayMillis,
-      'imagePath': imagePath,
-    };
-  }
-
-  factory Pet.fromMap(Map<String, dynamic> map) {
-    return Pet(
-      name: map['name'] as String,
-      species: map['species'] as String,
-      breed: map['breed'] as String,
-      gender: map['gender'] as String,
-      birthdayMillis: map['birthdayMillis'] as int,
-      imagePath: map['imagePath'] as String,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Pet.fromJson(String source) =>
-      Pet.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  bool operator ==(covariant Pet other) {
-    if (identical(this, other)) return true;
-
-    return other.name == name &&
-        other.species == species &&
-        other.breed == breed &&
-        other.gender == gender &&
-        other.birthdayMillis == birthdayMillis &&
-        other.imagePath == imagePath;
-  }
-
-  @override
-  int get hashCode {
-    return name.hashCode ^
-        species.hashCode ^
-        breed.hashCode ^
-        gender.hashCode ^
-        birthdayMillis.hashCode ^
-        imagePath.hashCode;
+    return 'Pet(id: $id, name: $name, species: $species, breed: $breed, gender: $gender, birthdayMillis: $birthdayMillis, imagePath: $imagePath)';
   }
 
   Pet copyWith({
+    String? id,
     String? name,
     String? species,
     String? breed,
@@ -105,6 +61,7 @@ class Pet extends HiveObject {
     String? imagePath,
   }) {
     return Pet(
+      id: id ?? this.id,
       name: name ?? this.name,
       species: species ?? this.species,
       breed: breed ?? this.breed,

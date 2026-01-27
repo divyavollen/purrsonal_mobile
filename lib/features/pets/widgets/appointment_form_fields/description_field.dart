@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:workspace/core/constants/app_dimensions.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
 import 'package:workspace/features/pets/validators/input_validator.dart';
-import 'package:workspace/features/pets/widgets/form/add_pet_input_builder.dart';
+import 'package:workspace/features/pets/widgets/pet_form_fields/add_pet_input_builder.dart';
 
 class DynamicDescField extends StatelessWidget {
   final Color pickedColor;
@@ -34,7 +34,7 @@ class DynamicDescField extends StatelessWidget {
         keyboardType: TextInputType.multiline,
         minLines: 4,
         maxLines: 10,
-        maxLength: 100,
+        maxLength: 200,
         fontSize: headLineSmallFontSize,
         border: InputBorder.none,
         floatingLabelBehavior: FloatingLabelBehavior.always,
