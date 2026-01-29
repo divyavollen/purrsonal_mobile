@@ -52,7 +52,7 @@ class Pet extends HiveObject {
   }
 
   Pet copyWith({
-    String? id,
+    dynamic id,
     String? name,
     String? species,
     String? breed,

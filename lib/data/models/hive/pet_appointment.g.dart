@@ -18,7 +18,7 @@ class PetAppointmentAdapter extends TypeAdapter<PetAppointment> {
     };
     return PetAppointment(
       id: fields[0] as dynamic,
-      petId: fields[1] as String,
+      petId: fields[1] as dynamic,
       title: fields[2] as String?,
       from: fields[3] as DateTime?,
       to: fields[4] as DateTime?,

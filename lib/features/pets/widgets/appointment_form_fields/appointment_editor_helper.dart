@@ -7,6 +7,12 @@ mixin AppointmentEditorHelper on State<AppointmentEditor> {
   set currentEvent(PetAppointment value);
   set selectedRepeatIndex(int value);
 
+  PetAppointmentProvider get appointmentProvider =>
+      context.read<PetAppointmentProvider>();
+
+  PetAppointment get masterEvent => widget.event!;
+  DateTime get apptDate => widget.selectedDate;
+
   Future<void> _pickDate(bool isStart) async {
     final DateTime initialDate = isStart
         ? currentEvent.from!
@@ -171,5 +177,80 @@ mixin AppointmentEditorHelper on State<AppointmentEditor> {
     );
 
     return choice;
+  }
+
+  Future<void> _showDeleteOptions(BuildContext rootContext) async {
+    if (currentEvent.recurrenceId != null ||
+        currentEvent.recurrenceRule == null) {
+      if (rootContext.mounted) {
+        Navigator.pop(rootContext);
+      }
+      await appointmentProvider.deleteEvent(masterEvent);
+
+      return;
+    } else if (currentEvent.recurrenceRule != null &&
+        currentEvent.recurrenceRule!.isNotEmpty) {
+      List<SheetItem> bottomSheetItems = [
+        SheetItem(
+          leading: Icon(
+            Icons.delete_outline,
+            color: Theme.of(context).colorScheme.error,
+          ),
+          title: Text('Delete occurrence'),
+          onTap: () {
+            Navigator.pop(context);
+            appointmentProvider.deleteOccurrence(masterEvent, apptDate);
+            if (rootContext.mounted) {
+              Navigator.pop(rootContext);
+            }
+          },
+          padding: EdgeInsets.only(left: 25.0, top: 10.0),
+        ),
+
+        SheetItem(
+          leading: Icon(
+            Icons.delete_forever,
+            color: Theme.of(context).colorScheme.error,
+          ),
+          title: Text(
+            'Delete series',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.error,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onTap: () async {
+            Navigator.pop(context);
+            await _showConfirmation(rootContext);
+          },
+          padding: EdgeInsets.only(left: 25.0, top: 5.0, bottom: 10.0),
+        ),
+      ];
+
+      await showModalBottomSheet(
+        context: context,
+        builder: (sheetContext) {
+          return CustomBottomSheet(items: bottomSheetItems);
+        },
+      );
+    }
+  }
+
+  Future<void> _showConfirmation(BuildContext rootContext) async {
+    ConfirmationAlertDialog.showConfirmation(
+      context,
+      button1: 'CANCEL',
+      button2: 'DELETE ALL',
+      confirmationMessage: 'This will remove all appointments in this series.',
+      icon: Icons.warning,
+      onPressed: () async {
+        Navigator.pop(context);
+        await appointmentProvider.deleteEvent(masterEvent);
+
+        if (rootContext.mounted) {
+          Navigator.pop(rootContext);
+        }
+      },
+    );
   }
 }

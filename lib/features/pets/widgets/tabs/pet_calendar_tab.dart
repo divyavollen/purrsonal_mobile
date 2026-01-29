@@ -130,7 +130,7 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
                             builder: (context) => AppointmentEditor.edit(
                               event: appointment,
                               petId: appointment.petId,
-                              selectedDate: appointment.from!,
+                              selectedDate: details.date!,
                               onDelete: (context) {},
                             ),
                           ),

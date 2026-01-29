@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:workspace/core/utils/app_logger.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
 
 class PetAppointmentProvider extends ChangeNotifier {
@@ -18,18 +19,50 @@ class PetAppointmentProvider extends ChangeNotifier {
     super.dispose();
   }
 
-  void addEvent(PetAppointment newAppt) async {
+  Future<void> addEvent(PetAppointment newAppt) async {
     int key = await _evtBox.add(newAppt);
     newAppt.id = key;
     await newAppt.save();
   }
 
-  void updateEvent(PetAppointment originalEvent, PetAppointment updatedEvent) {
+  Future<void> updateEvent(
+    PetAppointment originalEvent,
+    PetAppointment updatedEvent,
+  ) async {
     _evtBox.put(originalEvent.key, updatedEvent);
   }
 
-  void deleteEvent(PetAppointment event) {
+  Future<void> deleteEvent(PetAppointment event) async {
     event.delete();
+  }
+
+  Future<void> deleteOccurrence(
+    PetAppointment master,
+    DateTime selectedDate,
+  ) async {
+    final List<DateTime> currentExclusions = List<DateTime>.from(
+      master.exceptionDates ?? [],
+    );
+
+    final bool isAlreadyExcluded = currentExclusions.any(
+      (d) =>
+          d.year == selectedDate.year &&
+          d.month == selectedDate.month &&
+          d.day == selectedDate.day &&
+          d.hour == selectedDate.hour &&
+          d.minute == selectedDate.minute,
+    );
+
+    if (!isAlreadyExcluded) {
+      currentExclusions.add(selectedDate);
+
+      final updatedMaster = master.copyWith(exceptionDates: currentExclusions);
+      await _evtBox.put(master.key, updatedMaster);
+
+      appLogger.i(
+        'Occurrence at $selectedDate added to exceptions for Master ID: ${master.id}',
+      );
+    }
   }
 
   PetAppointment? getEventByKey(dynamic key) {
@@ -37,11 +70,11 @@ class PetAppointmentProvider extends ChangeNotifier {
     return _evtBox.get(actualKey);
   }
 
-  void deleteEventsForPetId(String id) async {
-    final keysToDelete = _evtBox.values
-        .where((event) => event.petId == id)
-        .map((event) => event.key)
-        .toList();
+  Future<void> deleteEventsForPetId(dynamic id) async {
+    final keysToDelete = _evtBox.keys.where((k) {
+      final event = _evtBox.get(k);
+      return event?.petId.toString() == id.toString();
+    }).toList();
 
     if (keysToDelete.isNotEmpty) {
       await _evtBox.deleteAll(keysToDelete);

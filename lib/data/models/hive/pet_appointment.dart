@@ -3,13 +3,15 @@ import 'package:hive_ce/hive_ce.dart';
 
 part 'pet_appointment.g.dart';
 
+const _undefined = Object();
+
 @HiveType(typeId: 2)
 class PetAppointment extends HiveObject {
   @HiveField(0)
   dynamic id;
 
   @HiveField(1)
-  String petId;
+  dynamic petId;
 
   @HiveField(2)
   String? title;
@@ -54,29 +56,29 @@ class PetAppointment extends HiveObject {
 
   PetAppointment.empty({
     this.id,
-    this.title = '',
+    this.title,
     this.isAllDay = false,
     required this.petId,
     this.background = const Color.fromARGB(255, 240, 177, 177),
     this.from,
     this.to,
-    this.description = '',
-    this.recurrenceRule = '',
+    this.description,
+    this.recurrenceRule,
     this.recurrenceId,
     this.exceptionDates = const [],
   });
 
   PetAppointment copyWith({
     String? title,
-    String? petId,
+    dynamic petId,
     DateTime? from,
     DateTime? to,
     Color? background,
     bool? isAllDay,
-    String? recurrenceRule,
+    Object? recurrenceRule = _undefined,
     String? description,
     dynamic id,
-    dynamic recurrenceId,
+    dynamic recurrenceId = _undefined,
     List<DateTime>? exceptionDates,
   }) {
     return PetAppointment(
@@ -88,8 +90,12 @@ class PetAppointment extends HiveObject {
       description: description ?? this.description,
       background: background ?? this.background,
       isAllDay: isAllDay ?? this.isAllDay,
-      recurrenceRule: recurrenceRule ?? this.recurrenceRule,
-      recurrenceId: recurrenceId ?? this.recurrenceId,
+      recurrenceRule: recurrenceRule == _undefined
+          ? this.recurrenceRule
+          : recurrenceRule as String?,
+      recurrenceId: recurrenceId == _undefined
+          ? this.recurrenceId
+          : recurrenceId,
       exceptionDates: exceptionDates ?? this.exceptionDates,
     );
   }

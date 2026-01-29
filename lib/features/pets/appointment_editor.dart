@@ -4,7 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:workspace/core/constants/repeat_freq_enum.dart';
 import 'package:workspace/core/utils/app_logger.dart';
+import 'package:workspace/core/widgets/confirmation_alert.dart';
+import 'package:workspace/core/widgets/custom_bottom_sheet.dart';
 import 'package:workspace/data/models/hive/pet_appointment.dart';
+import 'package:workspace/data/models/sheet_item.dart';
 import 'package:workspace/features/pets/providers/appointment_provider.dart';
 import 'package:workspace/features/pets/widgets/appointment_form_fields/allday_field.dart';
 import 'package:workspace/features/pets/widgets/appointment_form_fields/custom_repeat_picker.dart';
@@ -58,8 +61,14 @@ class _AppointmentEditorState extends State<AppointmentEditor>
 
     if (widget.mode == 'edit') {
       _isEditMode = true;
-      _currentEvent = widget.event!.copyWith();
-      appLogger.i('_currentEvent ${_currentEvent.toString()}');
+
+      final duration = widget.event!.to!.difference(widget.event!.from!);
+
+      _currentEvent = widget.event!.copyWith(
+        from: widget.selectedDate,
+        to: widget.selectedDate.add(duration),
+        id: widget.event!.id,
+      );
       _getRecurrenceRule();
     } else {
       _currentEvent = PetAppointment.empty(petId: widget.petId);
@@ -92,12 +101,13 @@ class _AppointmentEditorState extends State<AppointmentEditor>
     });
   }
 
+  void _delete() async {}
+
   void _submit() async {
     if (_apptFormKey.currentState?.validate() ?? false) {
       final provider = context.read<PetAppointmentProvider>();
       _apptFormKey.currentState!.save();
 
-      //TODO fix edit save creating new series issue
       if (_isEditMode) {
         if (_currentEvent.recurrenceId != null) {
           provider.updateEvent(widget.event!, _currentEvent);
@@ -112,19 +122,13 @@ class _AppointmentEditorState extends State<AppointmentEditor>
           } else if (choice == 'occurrence') {
             final master = widget.event!;
 
-            final List<DateTime> updatedDates = List<DateTime>.from(
+            final updatedDates = List<DateTime>.from(
               master.exceptionDates ?? [],
             );
 
-            updatedDates.add(
-              DateTime(
-                widget.selectedDate.year,
-                widget.selectedDate.month,
-                widget.selectedDate.day,
-                master.from!.hour,
-                master.from!.minute,
-              ),
-            );
+            if (!updatedDates.contains(widget.selectedDate)) {
+              updatedDates.add(widget.selectedDate);
+            }
 
             final updatedMaster = master.copyWith(
               exceptionDates: updatedDates,
@@ -133,8 +137,9 @@ class _AppointmentEditorState extends State<AppointmentEditor>
             provider.updateEvent(master, updatedMaster);
 
             final exception = _currentEvent.copyWith(
-              recurrenceId: master.key,
+              recurrenceId: master.id,
               recurrenceRule: null,
+              exceptionDates: [],
             );
 
             provider.addEvent(exception);
@@ -143,7 +148,6 @@ class _AppointmentEditorState extends State<AppointmentEditor>
           provider.updateEvent(widget.event!, _currentEvent);
         }
       } else {
-        appLogger.i('Add new appt');
         provider.addEvent(_currentEvent);
       }
       if (mounted) Navigator.pop(context);
@@ -193,7 +197,20 @@ class _AppointmentEditorState extends State<AppointmentEditor>
         title: Text(
           _isEditMode ? 'Edit Appointment' : 'New Appointment',
         ),
+
+        actions: <Widget>[
+          if (_isEditMode)
+            IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Theme.of(context).colorScheme.error,
+              ),
+              tooltip: 'Delete appointment',
+              onPressed: () => _showDeleteOptions(context),
+            ),
+        ],
       ),
+
       body: Form(
         key: _apptFormKey,
 
