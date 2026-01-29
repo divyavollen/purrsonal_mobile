@@ -90,7 +90,7 @@ class _PetFormState extends State<PetForm> {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(1995),
+      firstDate: DateTime(DateTime.now().year - 30),
       lastDate: DateTime.now(),
     );
 

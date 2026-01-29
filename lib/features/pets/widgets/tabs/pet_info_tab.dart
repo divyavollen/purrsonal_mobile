@@ -56,7 +56,7 @@ class PetInfoTab extends StatelessWidget {
                           _buildInfo(context, age),
                           _buildInfo(
                             context,
-                            DateUtil().formatDate(pet.birthdayMillis),
+                            DateUtil().formatDateMs(pet.birthdayMillis),
                           ),
                         ],
                       ),

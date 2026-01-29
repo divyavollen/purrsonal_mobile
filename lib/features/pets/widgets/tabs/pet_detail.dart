@@ -66,7 +66,16 @@ class PetDetails extends StatelessWidget {
                   context: context,
                   barrierDismissible: false,
                   builder: (context) => AppointmentEditor(
-                    selectedDate: selectedDate,
+                    selectedDate: DateTime(
+                      selectedDate.year,
+                      selectedDate.month,
+                      selectedDate.day,
+                      selectedDate.hour,
+                      selectedDate.minute,
+                      0,
+                      0,
+                      0,
+                    ),
                     petId: petId,
                   ),
                 );

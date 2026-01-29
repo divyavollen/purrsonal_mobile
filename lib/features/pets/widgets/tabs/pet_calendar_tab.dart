@@ -79,7 +79,7 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
                     showCurrentTimeIndicator: true,
                     firstDayOfWeek: 1,
                     initialSelectedDate: DateTime.now(),
-                    minDate: DateTime(1995, 01, 01),
+                    minDate: DateTime(DateTime.now().year - 30),
 
                     viewHeaderHeight: 60,
                     viewHeaderStyle: ViewHeaderStyle(
@@ -124,18 +124,28 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
                         final PetAppointment appointment =
                             details.appointments![0] as PetAppointment;
 
+                        final selectedDate = details.date!;
+
                         await Navigator.of(context, rootNavigator: true).push(
                           MaterialPageRoute(
                             fullscreenDialog: true,
                             builder: (context) => AppointmentEditor.edit(
                               event: appointment,
                               petId: appointment.petId,
-                              selectedDate: details.date!,
+                              selectedDate: DateTime(
+                                selectedDate.year,
+                                selectedDate.month,
+                                selectedDate.day,
+                                selectedDate.hour,
+                                selectedDate.minute,
+                                0,
+                                0,
+                                0,
+                              ),
                               onDelete: (context) {},
                             ),
                           ),
                         );
-                        // }
                       }
                     },
                   ),

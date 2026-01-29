@@ -21,8 +21,8 @@ mixin AppointmentEditorHelper on State<AppointmentEditor> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
+      firstDate: DateTime(DateTime.now().year - 30),
+      lastDate: DateTime(DateTime.now().year + 100),
     );
 
     if (pickedDate == null) return;
@@ -48,6 +48,7 @@ mixin AppointmentEditorHelper on State<AppointmentEditor> {
             pickedDate.day,
             currentEvent.to!.hour,
             currentEvent.to!.minute,
+            0,
             0,
             0,
           ),
@@ -77,8 +78,6 @@ mixin AppointmentEditorHelper on State<AppointmentEditor> {
       ),
     );
 
-    appLogger.i("Picked time ${pickedTime.toString()} isStart? $isStart");
-
     if (pickedTime == null) return;
 
     DateTime newTime = DateTime(
@@ -87,6 +86,7 @@ mixin AppointmentEditorHelper on State<AppointmentEditor> {
       initialDate.day,
       pickedTime.hour,
       pickedTime.minute,
+      0,
       0,
       0,
     );
@@ -149,7 +149,7 @@ mixin AppointmentEditorHelper on State<AppointmentEditor> {
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            child: CustomRepeatRulePicker(startDate: currentEvent.from!),
+            child: CustomRepeatRulePicker(startDate: apptDate),
           ),
         );
 
@@ -161,8 +161,6 @@ mixin AppointmentEditorHelper on State<AppointmentEditor> {
           currentEvent.from!,
           currentEvent.to!,
         );
-
-        appLogger.i('Custom rule: ${currentEvent.recurrenceRule}');
       });
     }
   }

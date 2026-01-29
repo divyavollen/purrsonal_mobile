@@ -15,7 +15,7 @@ class PetBirthdayField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       key: ValueKey(currentMs),
-      initialValue: DateUtil().formatDate(currentMs),
+      initialValue: DateUtil().formatDateMs(currentMs),
       decoration: InputDecoration(
         labelText: 'Birthday',
       ),

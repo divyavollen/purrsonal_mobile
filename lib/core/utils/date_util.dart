@@ -2,11 +2,16 @@ import 'package:age_calculator/age_calculator.dart';
 import 'package:intl/intl.dart';
 
 class DateUtil {
-  String formatDate(int? ms) {
+  String formatDateMs(int? ms) {
     if (ms == null || ms < 1) return '';
 
     var dt = DateTime.fromMillisecondsSinceEpoch(ms);
     return DateFormat('yyyy/MM/dd').format(dt);
+  }
+
+  String formatDate(DateTime? date) {
+    if (date == null) return '';
+    return DateFormat('yyyy/MM/dd').format(date);
   }
 
   DateTime? getDate(int? ms) {

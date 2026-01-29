@@ -101,8 +101,6 @@ class _AppointmentEditorState extends State<AppointmentEditor>
     });
   }
 
-  void _delete() async {}
-
   void _submit() async {
     if (_apptFormKey.currentState?.validate() ?? false) {
       final provider = context.read<PetAppointmentProvider>();
