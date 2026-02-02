@@ -33,7 +33,18 @@ class PetAppointmentProvider extends ChangeNotifier {
   }
 
   Future<void> deleteEvent(PetAppointment event) async {
-    event.delete();
+    final masterId = event.id;
+
+    final exceptionKeys = _evtBox.keys.where((k) {
+      final e = _evtBox.get(k);
+      return e?.recurrenceId == masterId;
+    }).toList();
+
+    if (exceptionKeys.isNotEmpty) {
+      await _evtBox.deleteAll(exceptionKeys);
+    }
+
+    await event.delete();
   }
 
   Future<void> deleteOccurrence(
@@ -73,6 +84,7 @@ class PetAppointmentProvider extends ChangeNotifier {
   Future<void> deleteEventsForPetId(dynamic id) async {
     final keysToDelete = _evtBox.keys.where((k) {
       final event = _evtBox.get(k);
+      appLogger.i('Checking Event: ${event?.title}, PetID: ${event?.petId}');
       return event?.petId.toString() == id.toString();
     }).toList();
 

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:workspace/core/widgets/confirmation_alert.dart';
 import 'package:workspace/core/widgets/custom_bottom_sheet.dart';
 import 'package:workspace/data/models/sheet_item.dart';
 
 class PetTileAction extends StatelessWidget {
+  final String petId;
   final Function onDelete;
-  const PetTileAction({super.key, required this.onDelete});
+  const PetTileAction({super.key, required this.onDelete, required this.petId});
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +19,21 @@ class PetTileAction extends StatelessWidget {
     return CustomBottomSheet(
       items: [
         SheetItem(
-          leading: Icon(Icons.admin_panel_settings),
-          title: Text('Manage Pet'),
-          onTap: () {}, //TODO complete this
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 4.0),
+            child: Icon(
+              FontAwesomeIcons.solidEye,
+              size: 15,
+            ),
+          ),
+          title: Text('View Pet'),
+          onTap: () {
+            context.pushNamed(
+              'pet-info',
+              pathParameters: {'petId': petId},
+            );
+            Navigator.pop(context);
+          },
           padding: EdgeInsets.only(left: 25.0, top: 10.0, bottom: 10.0),
         ),
         SheetItem(

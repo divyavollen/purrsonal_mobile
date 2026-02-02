@@ -148,19 +148,20 @@ class PetTile extends StatelessWidget {
       onLongPress: () => showModalBottomSheet(
         context: context,
         builder: (sheetContext) {
-          final messenger = ScaffoldMessenger.of(context);
-
           return PetTileAction(
+            petId: pet.key.toString(),
             onDelete: () {
-              Navigator.of(
-                context,
-                rootNavigator: true,
-              ).pop(); //close confirmation dialog
-              Navigator.of(sheetContext).pop(); //close PetTileAction
-              context.read<PetProvider>().deletePet(pet);
-              context.read<PetAppointmentProvider>().deleteEventsForPetId(
-                pet.id!,
-              );
+              final petProvider = context.read<PetProvider>();
+              final appointmentProvider = context
+                  .read<PetAppointmentProvider>();
+              final messenger = ScaffoldMessenger.of(context);
+
+              petProvider.deletePet(pet);
+              appointmentProvider.deleteEventsForPetId(pet.id!);
+
+              Navigator.of(context, rootNavigator: true).pop(); // Close dialog
+              Navigator.of(sheetContext).pop(); // Close bottom sheet
+
               messenger.showSnackBar(
                 const SnackBar(
                   content: Text('Pet deleted successfully!'),

@@ -46,7 +46,7 @@ class AppointmentTitleSection extends StatelessWidget {
         ),
         formatters: [
           FilteringTextInputFormatter.allow(
-            RegExp(r'[a-zA-Z\s]'),
+            RegExp(r'[a-zA-Z0-9\s\-\!\.\?]'),
           ),
         ],
       ),

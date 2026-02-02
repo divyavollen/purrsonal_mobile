@@ -152,7 +152,7 @@ mixin AppointmentEditorHelper on State<AppointmentEditor> {
             child: CustomRepeatRulePicker(startDate: apptDate),
           ),
         );
-
+    //TODO check weekly and monthly custom rule
     if (properties != null) {
       setState(() {
         selectedRepeatIndex = 4;
@@ -238,8 +238,9 @@ mixin AppointmentEditorHelper on State<AppointmentEditor> {
     ConfirmationAlertDialog.showConfirmation(
       context,
       button1: 'CANCEL',
-      button2: 'DELETE ALL',
-      confirmationMessage: 'This will remove all appointments in this series.',
+      button2: 'DELETE SERIES',
+      confirmationMessage:
+          'This will remove all appointments in this series, including any modified dates.',
       icon: Icons.warning,
       onPressed: () async {
         Navigator.pop(context);

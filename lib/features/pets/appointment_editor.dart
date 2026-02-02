@@ -135,6 +135,7 @@ class _AppointmentEditorState extends State<AppointmentEditor>
             provider.updateEvent(master, updatedMaster);
 
             final exception = _currentEvent.copyWith(
+              petId: master.petId,
               recurrenceId: master.id,
               recurrenceRule: null,
               exceptionDates: [],
