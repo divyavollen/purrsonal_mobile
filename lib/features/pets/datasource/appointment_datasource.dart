@@ -49,4 +49,6 @@ class AppointmentDatasource extends CalendarDataSource {
   }
 
   String getPetId(int index) => appointments![index].petId;
+
+  String getAppointmentType(int index) => appointments![index].appointmentType;
 }

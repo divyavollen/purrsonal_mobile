@@ -28,13 +28,14 @@ class PetAppointmentAdapter extends TypeAdapter<PetAppointment> {
       recurrenceRule: fields[8] as String?,
       recurrenceId: fields[9] as dynamic,
       exceptionDates: (fields[10] as List?)?.cast<DateTime>(),
+      appointmentType: fields[11] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, PetAppointment obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class PetAppointmentAdapter extends TypeAdapter<PetAppointment> {
       ..writeByte(9)
       ..write(obj.recurrenceId)
       ..writeByte(10)
-      ..write(obj.exceptionDates);
+      ..write(obj.exceptionDates)
+      ..writeByte(11)
+      ..write(obj.appointmentType);
   }
 
   @override

@@ -3,8 +3,6 @@ import 'package:hive_ce/hive_ce.dart';
 
 part 'pet_appointment.g.dart';
 
-const _undefined = Object();
-
 @HiveType(typeId: 2)
 class PetAppointment extends HiveObject {
   @HiveField(0)
@@ -40,6 +38,9 @@ class PetAppointment extends HiveObject {
   @HiveField(10)
   List<DateTime>? exceptionDates;
 
+  @HiveField(11)
+  String? appointmentType;
+
   PetAppointment({
     required this.id,
     required this.petId,
@@ -52,6 +53,7 @@ class PetAppointment extends HiveObject {
     this.recurrenceRule,
     this.recurrenceId,
     this.exceptionDates,
+    this.appointmentType,
   });
 
   PetAppointment.empty({
@@ -66,20 +68,22 @@ class PetAppointment extends HiveObject {
     this.recurrenceRule,
     this.recurrenceId,
     this.exceptionDates = const [],
+    this.appointmentType,
   });
 
   PetAppointment copyWith({
-    String? title,
+    dynamic id,
     dynamic petId,
+    String? title,
     DateTime? from,
     DateTime? to,
+    String? description,
     Color? background,
     bool? isAllDay,
-    Object? recurrenceRule = _undefined,
-    String? description,
-    dynamic id,
-    dynamic recurrenceId = _undefined,
+    String? recurrenceRule,
+    dynamic recurrenceId,
     List<DateTime>? exceptionDates,
+    String? appointmentType,
   }) {
     return PetAppointment(
       id: id ?? this.id,
@@ -90,18 +94,15 @@ class PetAppointment extends HiveObject {
       description: description ?? this.description,
       background: background ?? this.background,
       isAllDay: isAllDay ?? this.isAllDay,
-      recurrenceRule: recurrenceRule == _undefined
-          ? this.recurrenceRule
-          : recurrenceRule as String?,
-      recurrenceId: recurrenceId == _undefined
-          ? this.recurrenceId
-          : recurrenceId,
+      recurrenceRule: recurrenceRule ?? this.recurrenceRule,
+      recurrenceId: recurrenceId ?? this.recurrenceId,
       exceptionDates: exceptionDates ?? this.exceptionDates,
+      appointmentType: appointmentType ?? this.appointmentType,
     );
   }
 
   @override
   String toString() {
-    return 'PetAppointment(id: $id, petId: $petId, title: $title, from: $from, to: $to, description: $description, background: $background, isAllDay: $isAllDay, recurrenceRule: $recurrenceRule, recurrenceId: $recurrenceId, exceptionDates: $exceptionDates)';
+    return 'PetAppointment(id: $id, petId: $petId, title: $title, from: $from, to: $to, description: $description, background: $background, isAllDay: $isAllDay, recurrenceRule: $recurrenceRule, recurrenceId: $recurrenceId, exceptionDates: $exceptionDates, appointmentType: $appointmentType)';
   }
 }

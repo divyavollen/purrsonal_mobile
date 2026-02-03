@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:workspace/core/constants/appoinment_types_enum.dart';
 import 'package:workspace/core/constants/repeat_freq_enum.dart';
 import 'package:workspace/core/utils/app_logger.dart';
 import 'package:workspace/core/widgets/confirmation_alert.dart';
@@ -10,6 +11,7 @@ import 'package:workspace/data/models/hive/pet_appointment.dart';
 import 'package:workspace/data/models/sheet_item.dart';
 import 'package:workspace/features/pets/providers/appointment_provider.dart';
 import 'package:workspace/features/pets/widgets/appointment_form_fields/allday_field.dart';
+import 'package:workspace/features/pets/widgets/appointment_form_fields/appointment_type.dart';
 import 'package:workspace/features/pets/widgets/appointment_form_fields/custom_repeat_picker.dart';
 import 'package:workspace/features/pets/widgets/appointment_form_fields/date_time_picker.dart';
 import 'package:workspace/features/pets/widgets/appointment_form_fields/description_field.dart';
@@ -52,6 +54,7 @@ class _AppointmentEditorState extends State<AppointmentEditor>
   late PetAppointment _currentEvent;
   bool _isEditMode = false;
   int selectedRepeat = -1;
+  int selectedType = -1;
   Color pickedColor = Color(0xff443a49);
   static final _apptFormKey = GlobalKey<FormState>(debugLabel: 'apptForm');
 
@@ -69,6 +72,12 @@ class _AppointmentEditorState extends State<AppointmentEditor>
         to: widget.selectedDate.add(duration),
         id: widget.event!.id,
       );
+
+      selectedType = _currentEvent.appointmentType != null
+          ? PetAppointmentType.values.indexWhere(
+              (t) => t.name == _currentEvent.appointmentType,
+            )
+          : -1;
       _getRecurrenceRule();
     } else {
       _currentEvent = PetAppointment.empty(petId: widget.petId);
@@ -147,7 +156,6 @@ class _AppointmentEditorState extends State<AppointmentEditor>
           provider.updateEvent(widget.event!, _currentEvent);
         }
       } else {
-        appLogger.i('Creating new event ${currentEvent.toString()}');
         provider.addEvent(_currentEvent);
       }
       if (mounted) Navigator.pop(context);
@@ -214,118 +222,156 @@ class _AppointmentEditorState extends State<AppointmentEditor>
       body: Form(
         key: _apptFormKey,
 
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.manual,
 
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppointmentTitleSection(
-                currentEvent: _currentEvent,
-                onTap: () => _showColourPicker(pickedColor),
-              ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AppointmentTitleSection(
+                      currentEvent: _currentEvent,
+                      onTap: () => _showColourPicker(pickedColor),
+                    ),
 
-              const Divider(
-                height: 1.0,
-                thickness: 1,
-              ),
+                    const Divider(
+                      height: 1.0,
+                      thickness: 1,
+                    ),
 
-              AppointmentAllDayField(
-                currentEvent: _currentEvent,
-                onChanged: (bool value) {
-                  setState(() {
-                    _currentEvent.isAllDay = value;
-                  });
-                },
-              ),
+                    AppointmentAllDayField(
+                      currentEvent: _currentEvent,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _currentEvent.isAllDay = value;
+                        });
+                      },
+                    ),
 
-              ApptDateTimePicker(
-                date: _currentEvent.from!,
-                isAllDay: _currentEvent.isAllDay!,
-                onDateTap: () => _pickDate(true),
-                onTimeTap: () => _pickTime(true),
-              ),
+                    ApptDateTimePicker(
+                      date: _currentEvent.from!,
+                      isAllDay: _currentEvent.isAllDay!,
+                      onDateTap: () => _pickDate(true),
+                      onTimeTap: () => _pickTime(true),
+                    ),
 
-              ApptDateTimePicker(
-                date: _currentEvent.to!,
-                isAllDay: _currentEvent.isAllDay!,
-                onDateTap: () => _pickDate(false),
-                onTimeTap: () => _pickTime(false),
-              ),
+                    ApptDateTimePicker(
+                      date: _currentEvent.to!,
+                      isAllDay: _currentEvent.isAllDay!,
+                      onDateTap: () => _pickDate(false),
+                      onTimeTap: () => _pickTime(false),
+                    ),
 
-              const Divider(
-                height: 1.0,
-                thickness: 1,
-              ),
+                    const Divider(
+                      height: 1.0,
+                      thickness: 1,
+                    ),
 
-              RepeatRulePicker(
-                selectedRepeat: selectedRepeat,
+                    RepeatRulePicker(
+                      selectedRepeat: selectedRepeat,
 
-                onSelected: (newIndex) async {
-                  if (newIndex == null || newIndex == -1) {
-                    setState(() {
-                      selectedRepeat = -1;
-                      _currentEvent.recurrenceRule = null;
-                    });
-                    return;
-                  }
+                      onSelected: (newIndex) async {
+                        if (newIndex == null || newIndex == -1) {
+                          setState(() {
+                            selectedRepeat = -1;
+                            _currentEvent.recurrenceRule = null;
+                          });
+                          return;
+                        }
 
-                  final selectedFreq = Frequency.values[newIndex];
+                        final selectedFreq = Frequency.values[newIndex];
 
-                  if (selectedFreq == Frequency.custom) {
-                    await _openCustomRecurrencePicker(newIndex);
-                  } else {
-                    final RecurrenceProperties properties =
-                        RecurrenceProperties(
-                          startDate: _currentEvent.from!,
-                          recurrenceType: RecurrenceType.values[newIndex],
-                          interval: 1,
-                        );
+                        if (selectedFreq == Frequency.custom) {
+                          await _openCustomRecurrencePicker(newIndex);
+                        } else {
+                          final RecurrenceProperties properties =
+                              RecurrenceProperties(
+                                startDate: _currentEvent.from!,
+                                recurrenceType: RecurrenceType.values[newIndex],
+                                interval: 1,
+                              );
 
-                    if (selectedFreq == Frequency.yearly) {
-                      properties.dayOfMonth = _currentEvent.from!.day;
-                      properties.month = _currentEvent.from!.month;
-                    } else if (selectedFreq == Frequency.monthly) {
-                      properties.dayOfMonth = _currentEvent.from!.day;
-                    } else if (selectedFreq == Frequency.weekly) {
-                      properties.weekDays = <WeekDays>[
-                        WeekDays.values[_currentEvent.from!.weekday - 1],
-                      ];
-                    }
+                          if (selectedFreq == Frequency.yearly) {
+                            properties.dayOfMonth = _currentEvent.from!.day;
+                            properties.month = _currentEvent.from!.month;
+                          } else if (selectedFreq == Frequency.monthly) {
+                            properties.dayOfMonth = _currentEvent.from!.day;
+                          } else if (selectedFreq == Frequency.weekly) {
+                            properties.weekDays = <WeekDays>[
+                              WeekDays.values[_currentEvent.from!.weekday - 1],
+                            ];
+                          }
 
-                    setState(() {
-                      selectedRepeat = newIndex;
-                      _currentEvent.recurrenceRule = SfCalendar.generateRRule(
-                        properties,
-                        _currentEvent.from!,
-                        _currentEvent.to!,
-                      );
-                    });
-                  }
-                },
-              ),
+                          setState(() {
+                            selectedRepeat = newIndex;
+                            _currentEvent.recurrenceRule =
+                                SfCalendar.generateRRule(
+                                  properties,
+                                  _currentEvent.from!,
+                                  _currentEvent.to!,
+                                );
+                          });
+                        }
+                      },
+                    ),
 
-              const Divider(
-                height: 1.0,
-                thickness: 1,
-              ),
+                    const Divider(
+                      height: 1.0,
+                      thickness: 1,
+                    ),
 
-              DynamicDescField(
-                pickedColor: pickedColor,
-                currentEvent: _currentEvent,
-              ),
+                    AppointmentTypeField(
+                      selectedType: selectedType,
 
-              const SizedBox(height: 30),
+                      onSelected: (newIndex) async {
+                        if (newIndex == null || newIndex == -1) {
+                          setState(() {
+                            selectedType = -1;
+                            _currentEvent.appointmentType = null;
+                          });
+                          return;
+                        } else {
+                          setState(() {
+                            selectedType = newIndex;
+                            _currentEvent.appointmentType =
+                                PetAppointmentType.values[newIndex].name;
+                          });
+                        }
+                      },
+                    ),
 
-              Padding(
-                padding: EdgeInsets.only(bottom: bottomPadding),
-                child: ElevatedButton(
-                  onPressed: _submit,
-                  child: Text(_isEditMode ? 'Save' : 'Add Appointment'),
+                    DynamicDescField(
+                      pickedColor: pickedColor,
+                      currentEvent: _currentEvent,
+                    ),
+
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+
+            Container(
+              padding: EdgeInsets.fromLTRB(16, 10, 16, bottomPadding),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                border: Border(
+                  top: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                    width: 0.5,
+                  ),
+                ),
+              ),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _submit,
+                child: Text(_isEditMode ? 'Save' : 'Add Appointment'),
+              ),
+            ),
+          ],
         ),
       ),
     );
