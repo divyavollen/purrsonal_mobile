@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workspace/core/constants/app_dimensions.dart';
 
 class ConfirmationAlertDialog {
   final void Function()? onPressed;
@@ -48,7 +49,7 @@ class ConfirmationAlertDialog {
       ],
       title: Icon(
         icon,
-        size: 30,
+        size: iconSize30,
         color: Theme.of(context).colorScheme.error,
       ),
       content: Text(

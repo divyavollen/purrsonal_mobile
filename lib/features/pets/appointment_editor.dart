@@ -147,6 +147,7 @@ class _AppointmentEditorState extends State<AppointmentEditor>
           provider.updateEvent(widget.event!, _currentEvent);
         }
       } else {
+        appLogger.i('Creating new event ${currentEvent.toString()}');
         provider.addEvent(_currentEvent);
       }
       if (mounted) Navigator.pop(context);
@@ -280,6 +281,17 @@ class _AppointmentEditorState extends State<AppointmentEditor>
                           recurrenceType: RecurrenceType.values[newIndex],
                           interval: 1,
                         );
+
+                    if (selectedFreq == Frequency.yearly) {
+                      properties.dayOfMonth = _currentEvent.from!.day;
+                      properties.month = _currentEvent.from!.month;
+                    } else if (selectedFreq == Frequency.monthly) {
+                      properties.dayOfMonth = _currentEvent.from!.day;
+                    } else if (selectedFreq == Frequency.weekly) {
+                      properties.weekDays = <WeekDays>[
+                        WeekDays.values[_currentEvent.from!.weekday - 1],
+                      ];
+                    }
 
                     setState(() {
                       selectedRepeat = newIndex;

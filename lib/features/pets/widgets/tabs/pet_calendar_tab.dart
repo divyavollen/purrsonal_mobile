@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:workspace/core/constants/app_dimensions.dart';
@@ -45,6 +46,7 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
               headerText: _headerText,
               controller: _calendarController,
               onViewChanged: () => setState(() {}),
+              onHeaderDateSelect: () => onHeaderDateSelect(),
             ),
 
             Expanded(
@@ -165,6 +167,77 @@ class _PetCalendarTabState extends State<PetCalendarTab> {
           details.visibleDates[details.visibleDates.length ~/ 2],
         );
       });
+    });
+  }
+
+  void onHeaderDateSelect() async {
+    await showMonthPicker(
+      context: context,
+      initialDate: DateTime.now(),
+
+      monthPickerDialogSettings: MonthPickerDialogSettings(
+        dialogSettings: const PickerDialogSettings(
+          verticalScrolling: false,
+          dialogRoundedCornersRadius: radiusMedium,
+          customHeight: 200,
+          customWidth: 280,
+        ),
+        headerSettings: PickerHeaderSettings(
+          headerBackgroundColor: Theme.of(context).colorScheme.primary,
+          headerIconsColor: Theme.of(context).scaffoldBackgroundColor,
+          headerIconsSize: iconSize35,
+          previousIcon: Icons.arrow_left,
+          nextIcon: Icons.arrow_right,
+          headerSelectedIntervalTextStyle: TextStyle(fontSize: 0),
+          headerCurrentPageTextStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: headerFontSize,
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+        ),
+        dateButtonsSettings: PickerDateButtonsSettings(
+          unselectedMonthsTextColor: Theme.of(
+            context,
+          ).colorScheme.tertiary,
+          selectedMonthBackgroundColor: Theme.of(
+            context,
+          ).colorScheme.secondary,
+          selectedMonthTextColor: Theme.of(context).scaffoldBackgroundColor,
+          selectedYearTextColor: Theme.of(context).scaffoldBackgroundColor,
+          currentMonthTextColor: Theme.of(context).colorScheme.tertiaryFixed,
+          currentYearTextColor: Theme.of(context).colorScheme.tertiaryFixed,
+          monthTextStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: subTextFontSize,
+          ),
+        ),
+        actionBarSettings: PickerActionBarSettings(
+          cancelWidget: Text(
+            'CANCEL',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: buttonTextFontSize,
+              letterSpacing: 1.5,
+            ),
+          ),
+          confirmWidget: Text(
+            'OK',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: buttonTextFontSize,
+              letterSpacing: 1.5,
+            ),
+          ),
+        ),
+      ),
+    ).then((DateTime? pickedDate) {
+      if (pickedDate != null) {
+        setState(() {
+          _calendarController.displayDate = pickedDate;
+        });
+      }
     });
   }
 }

@@ -84,7 +84,6 @@ class PetAppointmentProvider extends ChangeNotifier {
   Future<void> deleteEventsForPetId(dynamic id) async {
     final keysToDelete = _evtBox.keys.where((k) {
       final event = _evtBox.get(k);
-      appLogger.i('Checking Event: ${event?.title}, PetID: ${event?.petId}');
       return event?.petId.toString() == id.toString();
     }).toList();
 

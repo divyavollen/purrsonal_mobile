@@ -32,3 +32,5 @@ final double xsmallFontSize = 11;
 
 final double calendarHeaderHeight = 60;
 final double agendaViewHeight = 240;
+final double iconSize30 = 30;
+final double iconSize35 = 35;

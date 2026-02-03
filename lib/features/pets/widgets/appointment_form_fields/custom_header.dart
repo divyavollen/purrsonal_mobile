@@ -6,11 +6,14 @@ class CustomHeader extends StatelessWidget {
   final String headerText;
   final CalendarController controller;
   final VoidCallback onViewChanged;
+  final VoidCallback onHeaderDateSelect;
+
   const CustomHeader({
     super.key,
     required this.headerText,
     required this.controller,
     required this.onViewChanged,
+    required this.onHeaderDateSelect,
   });
 
   @override
@@ -32,13 +35,49 @@ class CustomHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            headerText.toUpperCase(),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onPrimary,
-              letterSpacing: 1.2,
-              fontSize: 18,
+          Material(
+            color: Colors.transparent,
+            child: Ink(
+              decoration: BoxDecoration(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onPrimary.withValues(alpha: 0.15),
+                borderRadius: brSmall,
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onPrimary.withValues(alpha: 0.3),
+                ),
+              ),
+              child: InkWell(
+                onTap: onHeaderDateSelect,
+                borderRadius: brSmall,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        headerText.toUpperCase(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          letterSpacing: 1.2,
+                          fontSize: mainTextFontSize,
+                        ),
+                      ),
+
+                      const SizedBox(width: 3),
+                      Icon(
+                        Icons.arrow_drop_down,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
 
@@ -99,11 +138,10 @@ class CustomHeader extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                // Light overlay to contrast against the primary header
                 color: Theme.of(
                   context,
                 ).colorScheme.onPrimary.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: brSmall,
                 border: Border.all(
                   color: Theme.of(
                     context,
